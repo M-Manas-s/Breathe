@@ -48,3 +48,32 @@ class buttonWidget extends StatelessWidget {
         ));
   }
 }
+
+//DONT HAVE ACCOUNT?
+class signUpRichText extends StatelessWidget {
+  final String title;
+  final String text;
+  final Function onTap;
+  const signUpRichText({
+    Key key,
+    @required this.title,
+    @required this.onTap,
+    this.text = "Don't Have An Account? ",
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+          text: text,
+          style: TextStyle(color: Colors.black, fontSize: 14),
+          children: [
+            TextSpan(
+                recognizer: TapGestureRecognizer()..onTap = onTap,
+                text: title,
+                style: TextStyle(decoration: TextDecoration.underline))
+          ]),
+    );
+  }
+}

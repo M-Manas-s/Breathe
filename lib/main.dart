@@ -22,9 +22,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         routes: {
           LandingPage.id: (context) => LandingPage(),
-          Login.id : (context) => Login(),
-          Register.id : (context) => Register(),
-          Dashboard.id : (context) => Dashboard(),
+          Login.id: (context) => Login(),
+          Register.id: (context) => Register(),
+          Dashboard.id: (context) => Dashboard(),
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -39,7 +39,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   bool visible = true;
 
   @override
@@ -53,25 +52,35 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(const Duration(milliseconds: 2500), () {
       setState(() {
-        Navigator.push(context, LandingPageRoute(builder: (_) => LandingPage()));
+        Navigator.push(
+            context, LandingPageRoute(builder: (_) => LandingPage()));
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: AnimatedOpacity(
-        opacity: visible ? 0.0 : 1.0,
-        duration: Duration(milliseconds: 900),
-        child: Container(
-          color: Color(0xFFE3E3E3),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                flex: 5,
-                child: Container(
+    return Stack(children: [
+      Image.asset(
+        "Assets/Images/bk.jpg",
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        fit: BoxFit.cover,
+        alignment: Alignment.bottomCenter,
+      ),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        body: AnimatedOpacity(
+          opacity: visible ? 0.0 : 1.0,
+          duration: Duration(milliseconds: 900),
+          child: Container(
+            color : Colors.transparent,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Container(
                     padding: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.2),
                     decoration: BoxDecoration(
@@ -85,11 +94,10 @@ class _SplashScreenState extends State<SplashScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Hero(
-                          tag : 'icon',
+                          tag: 'icon',
                           child: Container(
                               child: Image.asset('Assets/Images/icon.png'),
-                              width: 130
-                          ),
+                              width: 130),
                         ),
                         Text(
                           'Breathe',
@@ -99,19 +107,20 @@ class _SplashScreenState extends State<SplashScreen> {
                           ),
                         )
                       ],
-                    )),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  color: Color(0xFFE3E3E3),
+                    ),
+                  ),
                 ),
-              )
-            ],
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    color: Colors.transparent,
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
-    );
+    ]);
   }
 }
-
