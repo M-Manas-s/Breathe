@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'Screens/LandingPage.dart';
 import 'Screens/Login.dart';
 import 'Screens/Register.dart';
+import 'Screens/MapView.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
           Login.id: (context) => Login(),
           Register.id: (context) => Register(),
           Dashboard.id: (context) => Dashboard(),
+          MapView.id : (context) => MapView(),
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -52,8 +54,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(const Duration(milliseconds: 2500), () {
       setState(() {
-        Navigator.push(
-            context, LandingPageRoute(builder: (_) => LandingPage()));
+        Navigator.pushAndRemoveUntil(
+            context, LandingPageRoute(builder: (_) => LandingPage()), (r) => false);
       });
     });
   }

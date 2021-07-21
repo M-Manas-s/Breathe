@@ -12,7 +12,7 @@ class RegisterPageRoute extends MaterialPageRoute {
   RegisterPageRoute({WidgetBuilder builder}) : super(builder: builder);
 
   @override
-  Duration get transitionDuration => Duration(milliseconds: 1100);
+  Duration get transitionDuration => Duration(milliseconds: 800);
 }
 
 class DashboardRoute extends MaterialPageRoute {
@@ -104,7 +104,7 @@ class _LoginState extends State<Login> {
           margin: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.2),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.5),

@@ -19,6 +19,11 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+
+  void writeUser(String user){
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -34,7 +39,7 @@ class _LandingPageState extends State<LandingPage> {
           margin: EdgeInsets.only(top : MediaQuery.of(context).size.height*0.35 ),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: BorderRadius.only(topRight: Radius.circular(30), topLeft: Radius.circular(30)),
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.5),
