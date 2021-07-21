@@ -1,5 +1,6 @@
 import 'package:breathe/Classes/CustomCard.dart';
 import "package:flutter/material.dart";
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Login.dart';
 import 'Register.dart';
@@ -20,8 +21,10 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
 
-  void writeUser(String user){
-
+  Future<void> writeUser(String user) async {
+    SharedPreferences sf = await SharedPreferences.getInstance();
+    print(user);
+    sf.setString('User', user);
   }
 
   @override
@@ -76,6 +79,7 @@ class _LandingPageState extends State<LandingPage> {
               ),
               GestureDetector(
                 onPanDown: (var x) {
+                  writeUser('Customer');
                   Navigator.push(
                       context, LoginPageRoute(builder: (_) => Login()));
                 },
@@ -94,6 +98,7 @@ class _LandingPageState extends State<LandingPage> {
               ),
               GestureDetector(
                 onTap: () {
+                  writeUser('Vendor');
                   Navigator.push(context,
                       RegisterPageRoute(builder: (_) => Register()));
                 },

@@ -1,6 +1,18 @@
 import 'package:breathe/Classes/CustomCard.dart';
 import 'package:breathe/Constants/Constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'Dashboard.dart';
+
+class CustomRoute extends MaterialPageRoute {
+  CustomRoute({WidgetBuilder builder}) : super(builder: builder);
+
+  @override
+  Duration get transitionDuration => Duration(milliseconds: 800);
+}
 
 class Register extends StatefulWidget {
   static String id = 'Register';
@@ -11,23 +23,61 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   String errorText;
+  String name;
   String email;
   String password;
+  String phno;
   bool spinner = false;
   bool state = true;
   bool absorb = false;
 
-  //FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> signUp() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('User');
+
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        spinner = true;
+      });
+      var newuser = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+//                                UserUpdateInfo updateInfo = UserUpdateInfo();
+//                                updateInfo.displayName = _usernameController.text;
+//                                user.updateProfile(updateInfo);
+      await auth.currentUser
+          .updateDisplayName(name);
+      FirebaseFirestore.instance
+          .collection('$user')
+          .add({
+        'Name': name,
+        "Email": email,
+        "PhoneNumber" : phno,
+      });
+      prefs.setString('Email', '$email');
+
+      setState(() {
+        spinner = false;
+      });
+      
+      if (newuser != null) {
+        Navigator.pushAndRemoveUntil(
+            context, CustomRoute(builder: (_) => Dashboard()), (r) => false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          //padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
-          child: Expanded(
+      body: Form(
+        key : _formKey,
+        child: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            //padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -46,7 +96,7 @@ class _RegisterState extends State<Register> {
                     Text(
                       "Breathe",
                       style: TextStyle(
-                        color: Colors.blue[700],
+                        color: Theme.of(context).accentColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 30,
                       ),
@@ -74,12 +124,11 @@ class _RegisterState extends State<Register> {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: Color(0xFFD2D2D2),
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
                         child: TextFormField(
                           onChanged: (value) {
-                            email = value.trim();
+                            name = value.trim();
                           },
                           cursorColor: Theme.of(context).accentColor,
                           textAlign: TextAlign.start,
@@ -88,12 +137,13 @@ class _RegisterState extends State<Register> {
                             enabledBorder: InputBorder.none,
                             errorBorder: InputBorder.none,
                             disabledBorder: InputBorder.none,
-                            filled: false,
+                            fillColor: Color(0xFFD2D2D2),
+                            filled: true,
                             hintText: "Full Name",
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 20.0),
                           ),
-                          validator: emailChecker,
+                          validator: nameValidator,
                         ),
                       ),
                     ],
@@ -117,7 +167,6 @@ class _RegisterState extends State<Register> {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: Color(0xFFD2D2D2),
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
                         child: TextFormField(
@@ -131,7 +180,8 @@ class _RegisterState extends State<Register> {
                             enabledBorder: InputBorder.none,
                             errorBorder: InputBorder.none,
                             disabledBorder: InputBorder.none,
-                            filled: false,
+                            fillColor: Color(0xFFD2D2D2),
+                            filled: true,
                             hintText: "Your Email",
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 20.0),
@@ -163,7 +213,6 @@ class _RegisterState extends State<Register> {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: Color(0xFFD2D2D2),
                               borderRadius: BorderRadius.all(Radius.circular(5)),
                             ),
                             child: TextFormField(
@@ -178,7 +227,8 @@ class _RegisterState extends State<Register> {
                                 enabledBorder: InputBorder.none,
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
-                                filled: false,
+                                fillColor: Color(0xFFD2D2D2),
+                                filled: true,
                                 hintText: "Create a Password",
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 20.0),
@@ -228,12 +278,11 @@ class _RegisterState extends State<Register> {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: Color(0xFFD2D2D2),
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
                         child: TextFormField(
                           onChanged: (value) {
-                            email = value.trim();
+                            phno = value.toString().trim();
                           },
                           cursorColor: Theme.of(context).accentColor,
                           textAlign: TextAlign.start,
@@ -243,14 +292,14 @@ class _RegisterState extends State<Register> {
                             enabledBorder: InputBorder.none,
                             errorBorder: InputBorder.none,
                             disabledBorder: InputBorder.none,
+                            fillColor: Color(0xFFD2D2D2),
                             filled: true,
-                            //hintText: "+91 ",
                             prefixText: "+91 ",
                             prefixStyle: TextStyle(color: Colors.black),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 20.0),
                           ),
-                          validator: emailChecker,
+                          validator: phoneNumberChecker,
                         ),
                       ),
                     ],
@@ -261,7 +310,7 @@ class _RegisterState extends State<Register> {
                 ),
                 GestureDetector(
                   onPanDown: (var x) {
-                    //Navigator.push(context, LoginPageRoute(builder: (_) => Login()));
+                    signUp();
                   },
                   child: CustomCard(
                     child: Text(

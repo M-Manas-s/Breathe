@@ -25,6 +25,29 @@ String emailChecker(value) {
   return null;
 }
 
+String nameValidator(value) {
+
+  if (value.isEmpty) {
+    return 'Please Enter Your Name';
+  }
+  else {
+    return null;
+  }
+}
+
+String phoneNumberChecker(value) {
+  print(value);
+  String pattern = r'^[0-9]{10}$';
+  RegExp regex = new RegExp(pattern);
+  if (value.isEmpty) {
+    return 'Please Enter Text';
+  } else if (!regex.hasMatch(value)) {
+    return "Please Enter A Valid Email";
+  }
+
+  return null;
+}
+
 class buttonWidget extends StatelessWidget {
   final String title;
   final Function onpressed;

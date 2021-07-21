@@ -1,12 +1,24 @@
 import 'dart:async';
 import 'package:breathe/Screens/Dashboard.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Screens/LandingPage.dart';
 import 'Screens/Login.dart';
 import 'Screens/Register.dart';
 import 'Screens/MapView.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var email = prefs.getString('email');
+  print(email);
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   runApp(MyApp());
 }
 
@@ -30,6 +42,7 @@ class MyApp extends StatelessWidget {
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          accentColor: Color(0xFF1F4F99),
         ),
         home: SplashScreen());
   }
