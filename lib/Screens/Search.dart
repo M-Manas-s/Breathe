@@ -1,0 +1,78 @@
+import 'package:breathe/Classes/CirclePainter.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/animation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
+class Search extends StatefulWidget {
+
+  static String id = 'Search';
+
+  @override
+  _SearchState createState() => _SearchState();
+}
+
+class _SearchState extends State<Search> with TickerProviderStateMixin {
+  AnimationController _controller;
+  Color color = Colors.blue[700];
+  double size = 90.0;
+  
+  readData() {
+    //TODO: Read LatLng
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    )..repeat();
+  }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+  Widget _button() {
+    return Center(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              colors: <Color>[
+                color,
+                color.withOpacity(0.7)
+              ],
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: Icon(Icons.search, size: 70, color: Colors.white,),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: CustomPaint(
+          painter: CirclePainter(
+            _controller,
+            color: color,
+          ),
+          child: SizedBox(
+            width: size * 3.8,
+            height: size * 3.8,
+            child: _button(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+

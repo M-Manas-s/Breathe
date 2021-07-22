@@ -44,9 +44,6 @@ class _RegisterState extends State<Register> {
       });
       var newuser = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-//                                UserUpdateInfo updateInfo = UserUpdateInfo();
-//                                updateInfo.displayName = _usernameController.text;
-//                                user.updateProfile(updateInfo);
       await auth.currentUser
           .updateDisplayName(name);
       FirebaseFirestore.instance
