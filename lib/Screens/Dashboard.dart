@@ -1,5 +1,7 @@
+import 'package:breathe/Classes/CustomCard.dart';
 import 'package:flutter/material.dart';
 
+import 'Info.dart';
 import 'Search.dart';
 
 class CustomRoute extends MaterialPageRoute {
@@ -19,35 +21,45 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: GestureDetector(
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-                context, CustomRoute(builder: (_) => Search()), (r) => false);
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  spreadRadius: 0.1,
-                  color: Colors.grey,
-                  blurRadius: 10,
-                )
-              ],
-            ),
-            child: Container(
-              width: 130,
-              child: Hero(
-                tag: 'icon',
-                child: Image.asset('Assets/Images/icon.png'),
-              ),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFF1565C0),
+        title: Text('Breathe',style: TextStyle(color: Colors.white),),
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFF1565C0),
+        child: Icon(Icons.search_sharp),
+        onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => Info()));},
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: Container(
+        child: Center(
+          child: ListView.builder(
+            itemCount: 10,
+            itemBuilder: (BuildContext context,int index) {
+              return CustomCard(
+                  child: ListView(
+                    children: <Widget>[
+                      Padding(padding: EdgeInsets.only(top: 10)),
+                      Row(
+                        children: <Widget>[
+                          Text('vendor name'),
+                          Center(child: Text('price'),)
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Text('buyer name')
+                        ],
+                      ),
+                    ],
+                  ),
+                  padding: EdgeInsets.all(12), margin: EdgeInsets.only(left: 20, right: 20,top: 20));
+            },
           ),
         ),
-        body: Container(),
       ),
     );
   }
