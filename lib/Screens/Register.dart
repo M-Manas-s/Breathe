@@ -52,6 +52,9 @@ class _RegisterState extends State<Register> {
         'Name': name,
         "Email": email,
         "PhoneNumber" : phno,
+        "Price" : -1,
+        "Location" : "null",
+        "Quantity" : 0,
       });
       prefs.setString('Email', '$email');
 
