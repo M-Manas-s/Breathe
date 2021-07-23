@@ -3,13 +3,12 @@ import "package:flutter/material.dart";
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Login.dart';
-import 'Register.dart';
 
 class LoginPageRoute extends MaterialPageRoute {
   LoginPageRoute({WidgetBuilder builder}) : super(builder: builder);
 
   @override
-  Duration get transitionDuration => Duration(milliseconds: 1300);
+  Duration get transitionDuration => Duration(milliseconds: 1000);
 }
 
 class LandingPage extends StatefulWidget {
@@ -29,93 +28,96 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      Image.asset(
-        "Assets/Images/bk.jpg",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.cover,
-        alignment: Alignment.bottomCenter,
-      ),
-      Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          margin: EdgeInsets.only(top : MediaQuery.of(context).size.height*0.35 ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(topRight: Radius.circular(30), topLeft: Radius.circular(30)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 1,
-                offset: Offset(0, 3), // changes position of shadow
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 70,
-              ),
-              Hero(
-                tag: 'icon',
-                child: Container(
-                    child: Image.asset('Assets/Images/icon.png'),
-                    width: MediaQuery.of(context).size.width*0.54,),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Text(
-                'Breathe',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 32,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Stack(children: [
+        Image.asset(
+          "Assets/Images/bk.jpg",
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+          alignment: Alignment.bottomCenter,
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Container(
+            margin: EdgeInsets.only(top : MediaQuery.of(context).size.height*0.35 ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 1,
+                  offset: Offset(0, 3), // changes position of shadow
                 ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height*0.05,
-              ),
-              GestureDetector(
-                onPanDown: (var x) {
-                  writeUser('Customer');
-                  Navigator.push(
-                      context, LoginPageRoute(builder: (_) => Login()));
-                },
-                child: CustomCard(
-                  child: Text(
-                    'Customer',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 70,
+                ),
+                Hero(
+                  tag: 'icon',
+                  child: Container(
+                      child: Image.asset('Assets/Images/icon.png'),
+                      width: MediaQuery.of(context).size.width*0.54,),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'Breathe',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 32,
                   ),
-                  margin: EdgeInsets.symmetric(horizontal: 60),
-                  color: Color(0xFF42A3F3),
-                  radius: 30.0,
                 ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              GestureDetector(
-                onTap: () {
-                  writeUser('Vendor');
-                  Navigator.push(context,
-                      RegisterPageRoute(builder: (_) => Register()));
-                },
-                child: CustomCard(
-                  child: Text(
-                    'Vendor',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height*0.05,
+                ),
+                GestureDetector(
+                  onPanDown: (var x) {
+                    writeUser('Customer');
+                    Navigator.push(
+                        context, LoginPageRoute(builder: (_) => Login()));
+                  },
+                  child: CustomCard(
+                    child: Text(
+                      'Customer',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    margin: EdgeInsets.symmetric(horizontal: 60),
+                    color: Color(0xFF42A3F3),
+                    radius: 30.0,
                   ),
-                  margin: EdgeInsets.symmetric(horizontal: 60),
-                  color: Colors.blue,
-                  radius: 30.0,
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: 15,
+                ),
+                GestureDetector(
+                  onPanDown: (var x) {
+                    writeUser('Vendor');
+                    Navigator.push(context,
+                        LoginPageRoute(builder: (_) => Login()));
+                  },
+                  child: CustomCard(
+                    child: Text(
+                      'Vendor',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    margin: EdgeInsets.symmetric(horizontal: 60),
+                    color: Colors.blue,
+                    radius: 30.0,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    ]);
+      ]),
+    );
   }
 }

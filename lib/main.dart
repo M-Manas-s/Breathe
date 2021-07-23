@@ -8,6 +8,7 @@ import 'Screens/LandingPage.dart';
 import 'Screens/Login.dart';
 import 'Screens/Register.dart';
 import 'Screens/MapView.dart';
+import 'Screens/Search.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
