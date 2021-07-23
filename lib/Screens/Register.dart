@@ -75,6 +75,7 @@ class _RegisterState extends State<Register> {
         color: Theme.of(context).accentColor,
         size: 30.0,
       ),
+      inAsyncCall: spinner,
       child: Scaffold(
         body: Form(
           key: _formKey,
