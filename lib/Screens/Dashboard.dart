@@ -25,11 +25,13 @@ class _DashboardState extends State<Dashboard> {
     List<String> ve = [];
     List<String> ce = [];
     List<double> p = [];
+    List<String> date = [];
     List<String> vn = [];
     List<String> cn = [];
 
     await FirebaseFirestore.instance
         .collection('DealsHistory')
+        .orderBy('DateTime')
         .get()
         .then((QuerySnapshot querySnapshot) {
       if (querySnapshot.size == 0) return;
@@ -37,6 +39,7 @@ class _DashboardState extends State<Dashboard> {
         ve.add(doc['VendorEmail']);
         ce.add(doc['CustomerEmail']);
         p.add(doc['Price']*1.00);
+        date.add(doc['DateTime']);
       });
     });
 
@@ -61,9 +64,10 @@ class _DashboardState extends State<Dashboard> {
         });
       });
 
-      list.add({"VN": vn[i], "CN": cn[i], "Price": p[i]});
-      print(list.length);
+      list.add({"VN": vn[i], "CN": cn[i], "Price": p[i], "DateTime" : date[i]});
     }
+    while(list.length>10)
+        list.removeLast();
   }
 
   @override
