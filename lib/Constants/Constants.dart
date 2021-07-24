@@ -8,6 +8,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 List<Vendor> vendorList = [];
 LatLng userLoc;
 
+class CustomRoute extends MaterialPageRoute {
+  CustomRoute({WidgetBuilder builder}) : super(builder: builder);
+
+  @override
+  Duration get transitionDuration => Duration(milliseconds: 800);
+}
+
 double calculateDistance(LatLng p1, LatLng p2) {
 
   double lat1 = p1.latitude;

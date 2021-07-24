@@ -12,11 +12,7 @@ import 'Screens/Search.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var email = prefs.getString('email');
-  print(email);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
@@ -56,10 +52,17 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool visible = true;
+  String email;
+
+  prefs() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    email = prefs.getString('Email')??"";
+  }
 
   @override
   void initState() {
     super.initState();
+    prefs();
     Timer(const Duration(milliseconds: 100), () {
       setState(() {
         visible = false;
@@ -68,8 +71,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(const Duration(milliseconds: 2500), () {
       setState(() {
-        Navigator.pushAndRemoveUntil(
-            context, LandingPageRoute(builder: (_) => LandingPage()), (r) => false);
+        email == "" ? Navigator.pushAndRemoveUntil(
+            context, LandingPageRoute(builder: (_) => LandingPage()), (r) => false) : Navigator.pushAndRemoveUntil(
+            context, LandingPageRoute(builder: (_) => Dashboard()), (r) => false)
+        ;
       });
     });
   }

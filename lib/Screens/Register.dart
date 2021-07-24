@@ -9,13 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Dashboard.dart';
 
-class CustomRoute extends MaterialPageRoute {
-  CustomRoute({WidgetBuilder builder}) : super(builder: builder);
-
-  @override
-  Duration get transitionDuration => Duration(milliseconds: 800);
-}
-
 class Register extends StatefulWidget {
   static String id = 'Register';
 
