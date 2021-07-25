@@ -34,7 +34,6 @@ dependencies:
   geolocator: ^7.3.0
   animate_icons: ^2.0.0
   url_launcher: ^6.0.9
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -55,8 +54,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - Assets/Images/icon.png
-    - Assets/Images/bk.jpg
+    - assets/images/icon.png
+    - assets/images/bk.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
@@ -64,4 +63,5 @@ flutter:
   fonts:
     - family: Barlow
       fonts:
-        - asset: Assets/Fonts/BarlowLight.ttf
+        - asset: assets/Fonts/BarlowLight.ttf
+

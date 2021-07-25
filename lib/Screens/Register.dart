@@ -40,14 +40,24 @@ class _RegisterState extends State<Register> {
       var newuser = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
       await auth.currentUser.updateDisplayName(name);
-      FirebaseFirestore.instance.collection('$user').add({
-        'Name': name,
-        "Email": email,
-        "PhoneNumber": phno,
-        "Price": -1,
-        "Location": "null",
-        "Quantity": 0,
-      });
+
+      if ( user=='Customer' )
+        FirebaseFirestore.instance.collection('$user').add({
+          'Name': name,
+          "Email": email,
+          "PhoneNumber": phno,
+        });
+      else
+        FirebaseFirestore.instance.collection('$user').add({
+          'Name': name,
+          "Email": email,
+          "PhoneNumber": phno,
+          "Price": 0,
+          "Location": "null",
+          "Quantity": 0,
+          "Address1" : '',
+          "Address2" : '',
+        });
       prefs.setString('Email', '$email');
 
       setState(() {

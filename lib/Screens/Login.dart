@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Dashboard.dart';
 import 'Register.dart';
+import 'VendorDashboard.dart';
 
 class RegisterPageRoute extends MaterialPageRoute {
   RegisterPageRoute({WidgetBuilder builder}) : super(builder: builder);
@@ -47,45 +48,48 @@ class _LoginState extends State<Login> {
   void login() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String user = prefs.getString('User');
-      if (_formKey.currentState.validate()) {
-        setState(() {
-          spinner = true;
-        });
-        try {
-          var authUser = await auth.signInWithEmailAndPassword(
-              email: email, password: password);
-          await FirebaseFirestore.instance
-              .collection('$user')
-              .where('Email', isEqualTo: email)
-              .get()
-              .then((QuerySnapshot querySnapshot) {
-            if ( querySnapshot.docs.length==0 ) {
-              print("Not a $user");
-              throw Exception(
-                  "Not a $user");
-            }
-          });
-
-          prefs.setString('Email', email);
-          if (authUser != null) {
-            Navigator.pushAndRemoveUntil(context,
-                DashboardRoute(builder: (_) => Dashboard()), (r) => false);
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        spinner = true;
+      });
+      try {
+        var authUser = await auth.signInWithEmailAndPassword(
+            email: email, password: password);
+        await FirebaseFirestore.instance
+            .collection('$user')
+            .where('Email', isEqualTo: email)
+            .get()
+            .then((QuerySnapshot querySnapshot) {
+          if (querySnapshot.docs.length == 0) {
+            print("Not a $user");
+            throw Exception("Not a $user");
           }
+        });
+
+        prefs.setString('Email', email);
+        if (authUser != null) {
+          user == "Customer"
+              ? Navigator.pushAndRemoveUntil(context,
+                  DashboardRoute(builder: (_) => Dashboard()), (r) => false)
+              : Navigator.pushAndRemoveUntil(
+                  context,
+                  DashboardRoute(builder: (_) => VendorDashboard()),
+                  (r) => false);
         }
-        on Exception{
-          setState(() {
-            spinner = false;
-            errorText = "Wrong Email/Password";
-          });
-        }
+      } on Exception {
+        setState(() {
+          spinner = false;
+          errorText = "Wrong Email/Password";
+        });
       }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
       Image.asset(
-        "Assets/Images/bk.jpg",
+        "assets/images/bk.jpg",
         width: MediaQuery.of(context).size.width,
         fit: BoxFit.cover,
         alignment: Alignment.bottomCenter,
@@ -101,10 +105,12 @@ class _LoginState extends State<Login> {
           backgroundColor: Colors.transparent,
           body: Container(
             height: MediaQuery.of(context).size.height,
-            margin: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.2),
+            margin:
+                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
@@ -122,16 +128,16 @@ class _LoginState extends State<Login> {
                   //mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.height*0.07,
+                      height: MediaQuery.of(context).size.height * 0.07,
                     ),
                     Hero(
                       tag: 'icon',
                       child: Container(
-                          child: Image.asset('Assets/Images/icon.png'),
-                          width: MediaQuery.of(context).size.height*0.25),
+                          child: Image.asset('assets/images/icon.png'),
+                          width: MediaQuery.of(context).size.height * 0.25),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height*0.01,
+                      height: MediaQuery.of(context).size.height * 0.01,
                     ),
                     Text(
                       'Breathe',
@@ -141,10 +147,11 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height*0.05,
+                      height: MediaQuery.of(context).size.height * 0.05,
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 40, vertical: 10),
                       child: Container(
                         decoration: BoxDecoration(
                           //color: Color(0xFFD2D2D2),
@@ -173,12 +180,14 @@ class _LoginState extends State<Login> {
                     ),
                     //SizedBox(height: 10),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 40, vertical: 10),
                       child: Stack(
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
                             ),
                             child: TextFormField(
                               onChanged: (value) {
@@ -225,10 +234,13 @@ class _LoginState extends State<Login> {
                     ),
                     Align(
                       alignment: Alignment.bottomCenter,
-                      child: Text(errorText, style: TextStyle(color: Colors.red),),
+                      child: Text(
+                        errorText,
+                        style: TextStyle(color: Colors.red),
+                      ),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height*0.05,
+                      height: MediaQuery.of(context).size.height * 0.05,
                     ),
                     GestureDetector(
                       onPanDown: (var x) {
@@ -239,13 +251,15 @@ class _LoginState extends State<Login> {
                           'Log In',
                           style: TextStyle(color: Colors.white, fontSize: 17),
                         ),
-                        margin: EdgeInsets.symmetric(horizontal: 80,),
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 80,
+                        ),
                         color: Theme.of(context).accentColor,
                         radius: 30.0,
                       ),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height*0.02,
+                      height: MediaQuery.of(context).size.height * 0.02,
                     ),
                     signUpRichText(
                       title: "Sign Up!",

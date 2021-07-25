@@ -32,7 +32,7 @@ class _LandingPageState extends State<LandingPage> {
       onWillPop: () async => false,
       child: Stack(children: [
         Image.asset(
-          "Assets/Images/bk.jpg",
+          "assets/images/bk.jpg",
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
           alignment: Alignment.bottomCenter,
@@ -62,7 +62,7 @@ class _LandingPageState extends State<LandingPage> {
                 Hero(
                   tag: 'icon',
                   child: Container(
-                      child: Image.asset('Assets/Images/icon.png'),
+                      child: Image.asset('assets/images/icon.png'),
                       width: MediaQuery.of(context).size.width*0.54,),
                 ),
                 SizedBox(

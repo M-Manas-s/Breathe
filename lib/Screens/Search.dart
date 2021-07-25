@@ -24,12 +24,12 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
   AnimationController _controller;
   Color color = Colors.blue[700];
   double size = 90.0;
+  bool loaded = false;
 
   Future<void> _getCurrentPosition() async {
     final GeolocatorPlatform _geolocationPlatform = GeolocatorPlatform.instance;
     final position = await _geolocationPlatform.getCurrentPosition();
     userLoc= LatLng(position.latitude, position.longitude);
-    print(userLoc);
   }
 
 
@@ -48,12 +48,12 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
                 email: doc['Email'],
                 price: (doc['Price']* 1.00),
                 location: stringToLatLng(doc['Location']),
-                quantity: doc['Quantity']
+                quantity: doc['Quantity'],
+                address: doc['Address1']+" "+doc['Address2']
             )
         );
       });
     });
-    print(calculateDistance(vendorList[0].location, userLoc));
   }
 
   LatLng stringToLatLng(String str) {
@@ -67,12 +67,20 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
             calculateDistance(b.location, userLoc)));
     while(vendorList.length > 10)
       vendorList.removeLast();
+    print(vendorList.length-1);
+    for ( int i = (vendorList.length-1); i>=0; i-- )
+      if ( calculateDistance(vendorList[i].location, userLoc) > 100 )
+          vendorList.removeAt(i);
   }
 
   void loadPreRequisites () async {
     await _getCurrentPosition();
     await readData();
     closestTen();
+    setState(() {
+      loaded = true;
+    });
+    if ( vendorList.length > 0 )
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -125,7 +133,8 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CustomPaint(
+        child: (loaded && vendorList.length == 0 ) ? Center(child : Text("No Vendors supplying Oxygen Cylinders near you",  style:
+        TextStyle(color: Color(0xFF1F4F99), fontSize: 19))) : CustomPaint(
           painter: CirclePainter(
             _controller,
             color: color,

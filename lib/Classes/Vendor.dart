@@ -7,6 +7,7 @@ class Vendor {
   final double price;
   final int quantity;
   final LatLng location;
+  final String address;
 
   Vendor(
       {this.name,
@@ -14,5 +15,6 @@ class Vendor {
       this.email,
       this.quantity,
       this.phno,
-      this.location});
+      this.location,
+      this.address});
 }

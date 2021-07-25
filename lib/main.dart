@@ -9,6 +9,7 @@ import 'Screens/Login.dart';
 import 'Screens/Register.dart';
 import 'Screens/MapView.dart';
 import 'Screens/Search.dart';
+import 'Screens/VendorDashboard.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,10 +54,18 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool visible = true;
   String email;
+  String user;
+
+  navigateToDashboard(){
+    user == "Customer" ? Navigator.pushAndRemoveUntil(
+        context, LandingPageRoute(builder: (_) => Dashboard()), (r) => false) : Navigator.pushAndRemoveUntil(
+        context, LandingPageRoute(builder: (_) => VendorDashboard()), (r) => false);
+  }
 
   prefs() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     email = prefs.getString('Email')??"";
+    user = prefs.getString('User')??"";
   }
 
   @override
@@ -72,9 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(milliseconds: 2500), () {
       setState(() {
         email == "" ? Navigator.pushAndRemoveUntil(
-            context, LandingPageRoute(builder: (_) => LandingPage()), (r) => false) : Navigator.pushAndRemoveUntil(
-            context, LandingPageRoute(builder: (_) => Dashboard()), (r) => false)
-        ;
+            context, LandingPageRoute(builder: (_) => LandingPage()), (r) => false) : navigateToDashboard() ;
       });
     });
   }
@@ -83,7 +90,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Stack(children: [
       Image.asset(
-        "Assets/Images/bk.jpg",
+        "assets/images/bk.jpg",
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         fit: BoxFit.cover,
@@ -117,7 +124,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         Hero(
                           tag: 'icon',
                           child: Container(
-                              child: Image.asset('Assets/Images/icon.png'),
+                              child: Image.asset('assets/images/icon.png'),
                               width: 130),
                         ),
                         Text(

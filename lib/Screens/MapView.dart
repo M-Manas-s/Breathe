@@ -228,7 +228,7 @@ class _MapViewState extends State<MapView> {
                   markers: makeSet().toSet(),
                   initialCameraPosition: CameraPosition(
                     target: userLoc,
-                    zoom: 15.0,
+                    zoom: 13.0,
                   ),
                 ),
               ),
@@ -252,7 +252,7 @@ class _MapViewState extends State<MapView> {
                               style: TextStyle(
                                 color: Theme.of(context).accentColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                                fontSize: 18,
                               ),
                             ),
                             SizedBox(
@@ -284,6 +284,17 @@ class _MapViewState extends State<MapView> {
                                   height: 3,
                                 ),
                                 Text(
+                                  vendorList[selIndex].address,
+                                  style: TextStyle(
+                                    color: Theme.of(context).accentColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 3,
+                                ),
+                                Text(
                                   "${calculateDistance(vendorList[selIndex].location, userLoc).toStringAsFixed(2)} km",
                                   style: TextStyle(
                                     fontSize: 20,
@@ -297,7 +308,7 @@ class _MapViewState extends State<MapView> {
                             CustomCard(
                               margin: EdgeInsets.symmetric(horizontal: 30),
                               child: Container(
-                                padding: EdgeInsets.all(25),
+                                padding: EdgeInsets.all(15),
                                 child: Column(
                                   children: [
                                     Text(
@@ -319,7 +330,7 @@ class _MapViewState extends State<MapView> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 40,
+                                      height: 30,
                                     ),
                                     Text(
                                       "Rs ${vendorList[selIndex].price.toString()}",
@@ -336,7 +347,7 @@ class _MapViewState extends State<MapView> {
                               color: Theme.of(context).accentColor,
                             ),
                             SizedBox(
-                              height: 40,
+                              height: 30,
                             ),
                             Column(
                               children: [
@@ -389,7 +400,7 @@ class _MapViewState extends State<MapView> {
                               ],
                             ),
                             SizedBox(
-                              height: 20,
+                              height: 15,
                             ),
                             Container(
                                 height: query.height * 0.08,
@@ -460,42 +471,6 @@ class _MapViewState extends State<MapView> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class Anim extends StatefulWidget {
-  const Anim({Key key}) : super(key: key);
-
-  @override
-  _AnimState createState() => _AnimState();
-}
-
-class _AnimState extends State<Anim> with TickerProviderStateMixin {
-  AnimationController _animationController;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 1500),
-    );
-    _animationController.animateTo(20000.0);
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedIcon(
-      progress: _animationController,
-      icon: AnimatedIcons.add_event,
-      size: 145,
     );
   }
 }
