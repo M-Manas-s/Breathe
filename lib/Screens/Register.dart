@@ -8,6 +8,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Dashboard.dart';
+import 'VendorDashboard.dart';
 
 class Register extends StatefulWidget {
   static String id = 'Register';
@@ -65,8 +66,12 @@ class _RegisterState extends State<Register> {
       });
 
       if (newuser != null) {
+        if ( user=='Customer' )
         Navigator.pushAndRemoveUntil(
             context, CustomRoute(builder: (_) => Dashboard()), (r) => false);
+        else
+          Navigator.pushAndRemoveUntil(
+              context, CustomRoute(builder: (_) => VendorDashboard()), (r) => false);
       }
     }
   }

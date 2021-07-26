@@ -278,7 +278,7 @@ class _VendorDashboardState extends State<VendorDashboard> {
                 ),
                 Container(
                   padding: EdgeInsets.only(top: 10),
-                  margin: EdgeInsets.only(top: query.height * 0.75),
+                  margin: EdgeInsets.only(top: query.height * 0.73),
                   height: query.height * 0.2,
                   decoration: BoxDecoration(
                       color: Theme.of(context).accentColor,
@@ -287,7 +287,7 @@ class _VendorDashboardState extends State<VendorDashboard> {
                           topLeft: Radius.circular(30))),
                   child: Center(
                     child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       // crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
@@ -361,7 +361,7 @@ class _VendorDashboardState extends State<VendorDashboard> {
                                         "Failed to update user: $error"));
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.all(10),
+                                    padding: EdgeInsets.all(7),
                                     decoration: BoxDecoration(
                                       color: Colors.blue,
                                       shape: BoxShape.circle,
@@ -396,7 +396,7 @@ class _VendorDashboardState extends State<VendorDashboard> {
                                         color: Colors.blue,
                                         shape: BoxShape.circle,
                                       ),
-                                      child: Icon(Icons.add, color: Colors.white, size: 30,),
+                                      child: Icon(Icons.add, color: Colors.white, size: 25,),
                                     )
                                 ),
                               ],
