@@ -4,17 +4,23 @@ class CustomCard extends StatelessWidget {
   final Widget child;
   final Color color;
   final double radius;
+  final double inkwellRadius;
+  final BorderRadius borderRadius;
   final EdgeInsets padding;
   final EdgeInsets margin;
   final bool shadow;
+  final BoxShadow boxShadow;
+  final Function onTap;
 
   CustomCard(
       {@required this.child,
         this.color = const Color(0xFF282B4E),
-        this.radius = 10.0,
+        this.radius,
+        this.borderRadius,
         this.padding,
         this.margin,
-      this.shadow = false});
+      this.shadow = false,
+      this.boxShadow, this.inkwellRadius, this.onTap });
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +29,24 @@ class CustomCard extends StatelessWidget {
         margin: margin == null ? EdgeInsets.only(top: 5, bottom: 5) : margin,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.all(Radius.circular(radius)),
+
+          borderRadius: this.radius==null ?
+          (borderRadius == null ? BorderRadius.all(Radius.circular(0.0)) : borderRadius)
+              : BorderRadius.all(Radius.circular(radius)),
+
           boxShadow: shadow ? [
-            BoxShadow(
+            boxShadow == null ? BoxShadow(
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 1,
               blurRadius: 1,
-              offset: Offset(0, 3), // changes position of shadow
-            ),
+              offset: Offset(0, 3),
+            ) : boxShadow,
           ] : null,
         ),
         child: Container(
+
           child: InkWell(
-            borderRadius: BorderRadius.circular(radius),
+            borderRadius: radius == null ? BorderRadius.circular(inkwellRadius == null ? 0.0 : inkwellRadius ) : BorderRadius.circular(radius),
             splashColor: Color(0xFF1E7777).withAlpha(30),
             onTap: () {},
             child: Container(
