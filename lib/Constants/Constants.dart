@@ -16,7 +16,6 @@ class CustomRoute extends MaterialPageRoute {
 }
 
 double calculateDistance(LatLng p1, LatLng p2) {
-
   double lat1 = p1.latitude;
   double lon1 = p1.longitude;
   double lat2 = p2.latitude;
@@ -24,20 +23,18 @@ double calculateDistance(LatLng p1, LatLng p2) {
 
   var p = 0.017453292519943295;
   var c = cos;
-  var a = 0.5 - c((lat2 - lat1) * p) / 2 +
-      c(lat1 * p) * c(lat2 * p) *
-          (1 - c((lon2 - lon1) * p)) / 2;
+  var a = 0.5 -
+      c((lat2 - lat1) * p) / 2 +
+      c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
   return 12742 * asin(sqrt(a));
 }
 
 String passwordValidator(value) {
-
   if (value.isEmpty) {
     return 'Please Enter Text';
   } else if (value.length <= 7) {
     return 'Password Must Be Atleast 8 Characters Long';
-  }
-  else {
+  } else {
     return null;
   }
 }
@@ -55,11 +52,9 @@ String emailChecker(value) {
 }
 
 String nameValidator(value) {
-
   if (value.isEmpty) {
     return 'Please Enter Your Name';
-  }
-  else {
+  } else {
     return null;
   }
 }
@@ -80,6 +75,7 @@ String phoneNumberChecker(value) {
 class buttonWidget extends StatelessWidget {
   final String title;
   final Function onpressed;
+
   const buttonWidget({
     Key key,
     this.title,
@@ -106,6 +102,7 @@ class signUpRichText extends StatelessWidget {
   final String title;
   final String text;
   final Function onTap;
+
   const signUpRichText({
     Key key,
     @required this.title,
@@ -128,4 +125,61 @@ class signUpRichText extends StatelessWidget {
           ]),
     );
   }
+}
+
+Alignment getAlign(int pos) {
+  int x = (pos / 10).floor();
+  int y = pos % 10;
+  double posx, posy;
+  switch (x) {
+    case 1:
+      posx = -1;
+      break;
+    case 2:
+      posx = -1 / 3;
+      break;
+    case 3:
+      posx = 1 / 3;
+      break;
+    case 4:
+      posx = 1;
+      break;
+  }
+
+  switch (y) {
+    case 1:
+      posy = 1;
+      break;
+    case 2:
+      posy = 1 / 3;
+      break;
+    case 3:
+      posy = -1 / 3;
+      break;
+    case 4:
+      posy = -1;
+      break;
+  }
+
+  return Alignment(posx, posy);
+}
+
+Widget userAvater(int avatarCode, BuildContext context, Image userImg,
+    {double width = 1.2,
+    BorderRadius br = const BorderRadius.only(
+      topRight: Radius.circular(10.0),
+      topLeft: Radius.circular(10.0),
+    )}) {
+  return ClipRRect(
+    borderRadius: br,
+    child: Align(
+      alignment: getAlign(avatarCode),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * width,
+        child: userImg,
+      ),
+      widthFactor: 0.25,
+      heightFactor: 0.25,
+    ),
+  );
 }

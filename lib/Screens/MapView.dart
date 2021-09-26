@@ -1,21 +1,17 @@
 import 'dart:async';
 
 import 'package:breathe/Classes/CustomCard.dart';
+import 'package:breathe/Classes/VendorCard.dart';
 import 'package:breathe/Constants/Constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:animate_icons/animate_icons.dart';
-import 'package:url_launcher/link.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'Dashboard.dart';
-import 'Login.dart';
 
 class MapView extends StatefulWidget {
   static String id = 'MapViewView';
@@ -25,26 +21,26 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  Completer<GoogleMapController> _controller = Completer();
+  GoogleMapController _controller;
   AnimateIconController ic;
   bool infovis = false;
   int selIndex;
-  double ratio = 0.87;
   bool spinner = false;
   bool booked = false;
+  bool resizeMap = false;
+  Image userImg;
 
   @override
   void initState() {
     super.initState();
     ic = AnimateIconController();
+    userImg = Image.asset('assets/images/user.jpg');
   }
 
-  void assignMarker() {
-    setState(() {});
-  }
-
-  void _onMapViewCreated(GoogleMapController controller) {
-    _controller.complete(controller);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(userImg.image, context);
   }
 
   void activeIndex(int index) {
@@ -52,27 +48,12 @@ class _MapViewState extends State<MapView> {
       setState(() {
         infovis = true;
         selIndex = index;
-        ratio = 0.35;
       });
     });
   }
 
   List<Marker> makeSet() {
-    List<Marker> list = [
-      Marker(
-        markerId: MarkerId('You'),
-        onTap: () {
-          setState(() {
-            infovis = false;
-            ratio = 0.87;
-          });
-        },
-        position: userLoc,
-        infoWindow: InfoWindow(
-          title: 'You',
-        ),
-      ),
-    ];
+    List<Marker> list = [];
     for (int i = 0; i < vendorList.length; i++) {
       list.add(Marker(
         markerId: MarkerId('V$i'),
@@ -121,7 +102,6 @@ class _MapViewState extends State<MapView> {
   }
 
   showConfirmationAlertDialog(BuildContext context) {
-    // Create button
     Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () async {
@@ -160,7 +140,7 @@ class _MapViewState extends State<MapView> {
           'VendorEmail': ve,
           'CustomerEmail': prefs.get('Email'),
           'Price': price,
-          'DateTime' : DateTime.now().toString(),
+          'DateTime': DateTime.now().toString(),
         });
 
         setState(() {
@@ -175,20 +155,18 @@ class _MapViewState extends State<MapView> {
         });
 
         Timer(const Duration(milliseconds: 1500), () {
-          Navigator.pushAndRemoveUntil(context,
-              CustomRoute(builder: (_) => Dashboard()), (r) => false);
+          Navigator.pushAndRemoveUntil(
+              context, CustomRoute(builder: (_) => Dashboard()), (r) => false);
         });
       },
     );
 
-    // Create AlertDialog
     AlertDialog alert = AlertDialog(
-      title:
-          Text("Book Oxygen Cylinder with ${vendorList[selIndex].name.split(' ')[0]} ?"),
+      title: Text(
+          "Book Oxygen Cylinder with ${vendorList[selIndex].name.split(' ')[0]} ?"),
       actions: [okButton, cancelButton()],
     );
 
-    // show the dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -200,13 +178,13 @@ class _MapViewState extends State<MapView> {
   @override
   Widget build(BuildContext context) {
     Size query = MediaQuery.of(context).size;
+    var mapPadding = query.height * 0.05;
 
     return WillPopScope(
       onWillPop: () async {
         if (infovis)
           setState(() {
             infovis = false;
-            ratio = 0.87;
           });
         else
           showCancelAlertDialog(context);
@@ -222,9 +200,17 @@ class _MapViewState extends State<MapView> {
           body: Stack(
             children: [
               Container(
-                margin: EdgeInsets.only(bottom: query.height * (1 - ratio)),
+                height: query.height * 0.65,
                 child: GoogleMap(
-                  onMapCreated: _onMapViewCreated,
+                  myLocationEnabled: true,
+                  padding: EdgeInsets.only(bottom: mapPadding),
+                  onMapCreated: (GoogleMapController controller) async {
+                    _controller = controller;
+                    Completer().complete(controller);
+                    setState(() {
+                      mapPadding = query.height * 0.05;
+                    });
+                  },
                   markers: makeSet().toSet(),
                   initialCameraPosition: CameraPosition(
                     target: userLoc,
@@ -232,198 +218,172 @@ class _MapViewState extends State<MapView> {
                   ),
                 ),
               ),
-              Container(
-                width: query.width,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius:
-                      BorderRadius.all(Radius.circular(!infovis ? 0 : 40.0)),
-                ),
-                margin: EdgeInsets.only(
-                    top: query.height * (infovis ? ratio - 0.01 : ratio)),
-                padding: EdgeInsets.only(top: infovis ? 20 : 0),
-                child: Center(
-                  child: !infovis
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Oxygen Supplies near you",
-                              style: TextStyle(
-                                color: Theme.of(context).accentColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 4,
-                            ),
-                            Text(
-                              "Tap on a vendor to know more",
-                              style: TextStyle(
-                                fontSize: 15,
-                              ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  vendorList[selIndex].name,
-                                  style: TextStyle(
-                                    color: Theme.of(context).accentColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 35,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 3,
-                                ),
-                                Text(
-                                  vendorList[selIndex].address,
-                                  style: TextStyle(
-                                    color: Theme.of(context).accentColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 3,
-                                ),
-                                Text(
-                                  "${calculateDistance(vendorList[selIndex].location, userLoc).toStringAsFixed(2)} km",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            CustomCard(
-                              margin: EdgeInsets.symmetric(horizontal: 30),
-                              child: Container(
-                                padding: EdgeInsets.all(15),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      vendorList[selIndex].quantity.toString(),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 40,
-                                        letterSpacing: 1,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Cylinders Available",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20,
-                                        letterSpacing: 1,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    Text(
-                                      "Rs ${vendorList[selIndex].price.toString()}",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 25,
-                                        letterSpacing: 1,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              color: Theme.of(context).accentColor,
-                            ),
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left:12),
-                                  child: Text(
-                                    "Call ${vendorList[selIndex].name.split(' ')[0]}",
-                                    style: TextStyle(
-                                      color: Theme.of(context).accentColor,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    launch('tel:${vendorList[selIndex].phno}');
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Theme.of(context).accentColor,
-                                        ),
-                                        child: Icon(
-                                          Icons.phone_rounded,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        vendorList[selIndex].phno.toString(),
-                                        style: TextStyle(
-                                          decoration: TextDecoration.underline,
-                                          color: Theme.of(context).accentColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 25,
-                                          letterSpacing: 1,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            Container(
-                                height: query.height * 0.08,
-                                width: query.width,
-                                color: Theme.of(context).accentColor,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    showConfirmationAlertDialog(context);
-                                  },
-                                  child: Center(
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: query.width,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0))),
+                  height: query.height * 0.4,
+                  padding: EdgeInsets.only(top: infovis ? 20 : 0),
+                  child: Center(
+                    child: !infovis
+                        ? Column(
+                            mainAxisAlignment: infovis
+                                ? MainAxisAlignment.start
+                                : MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
                                     child: Text(
-                                      "Book Now",
+                                      "Oxygen Vendors near you",
                                       style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 25,
-                                        letterSpacing: 2,
+                                        color: Theme.of(context).accentColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22,
                                       ),
                                     ),
                                   ),
-                                ))
-                          ],
-                        ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 5,
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 30),
+                                  //padding: EdgeInsets.symmetric(horizontal: 5),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.black, width: 2),
+                                      borderRadius: BorderRadius.all(
+                                          (Radius.circular(10)))),
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    shrinkWrap: true,
+                                    itemCount: vendorList.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          _controller.moveCamera(
+                                              CameraUpdate.newCameraPosition(
+                                            CameraPosition(
+                                                target:
+                                                    vendorList[index].location,
+                                                zoom: 13.0),
+                                          ));
+                                          activeIndex(index);
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 7),
+                                          child: FittedBox(
+                                            fit: BoxFit.fill,
+                                            child: Column(
+                                              children: [
+                                                userAvater(
+                                                    vendorList[index]
+                                                        .avatarCode,
+                                                    context,
+                                                    userImg,
+                                                    br: BorderRadius.circular(
+                                                        100.0)),
+                                                SizedBox(
+                                                  height: 2,
+                                                ),
+                                                Text(vendorList[index]
+                                                    .name
+                                                    .split(' ')[0])
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 10),
+                                  child: Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Text(
+                                      "Tap on a vendor to know more",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: query.width * 0.05),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                VendorCard(
+                                  vendor: vendorList[selIndex],
+                                  userImg: userImg,
+                                ),
+                                Container(
+                                  height: query.height * 0.08,
+                                  width: query.width,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showConfirmationAlertDialog(context);
+                                    },
+                                    child: CustomCard(
+                                      margin: EdgeInsets.zero,
+                                      padding: EdgeInsets.only(
+                                          left: 22,
+                                          right: 10,
+                                          top: 10,
+                                          bottom: 10),
+                                      radius: 20,
+                                      color: Theme.of(context).accentColor,
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Book Cylinder",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 21,
+                                                  letterSpacing: 1),
+                                            ),
+                                            CustomCard(
+                                              margin: EdgeInsets.zero,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 15, vertical: 5),
+                                              child: Text(
+                                                "\u20B9 ${vendorList[selIndex].price.toStringAsFixed(0)}",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 19),
+                                              ),
+                                              color: Colors.blue.shade600,
+                                              radius: 14,
+                                            )
+                                          ]),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                  ),
                 ),
               ),
               booked
@@ -435,8 +395,8 @@ class _MapViewState extends State<MapView> {
                         child: Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(30))
-                          ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30))),
                           width: query.height * 0.2,
                           height: query.height * 0.2,
                           child: Center(

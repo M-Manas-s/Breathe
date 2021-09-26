@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:ui';
 import 'dart:math' as math;
 
@@ -114,57 +113,6 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       loading = false;
     });
-  }
-
-  Widget userAvater(int avatarCode) {
-    return ClipRRect(
-      child: Align(
-        alignment: getAlign(avatarCode),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 1.2,
-          child: userImg,
-        ),
-        widthFactor: 0.25,
-        heightFactor: 0.25,
-      ),
-    );
-  }
-
-  Alignment getAlign(int pos) {
-    int x = (pos / 10).floor();
-    int y = pos % 10;
-    double posx, posy;
-    switch (x) {
-      case 1:
-        posx = -1;
-        break;
-      case 2:
-        posx = -1 / 3;
-        break;
-      case 3:
-        posx = 1 / 3;
-        break;
-      case 4:
-        posx = 1;
-        break;
-    }
-
-    switch (y) {
-      case 1:
-        posy = 1;
-        break;
-      case 2:
-        posy = 1 / 3;
-        break;
-      case 3:
-        posy = -1 / 3;
-        break;
-      case 4:
-        posy = -1;
-        break;
-    }
-
-    return Alignment(posx, posy);
   }
 
   @override
@@ -496,29 +444,7 @@ class _DashboardState extends State<Dashboard> {
                                                       0),
                                                 ),
                                                 child: Column(children: [
-                                                  ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topRight:
-                                                          Radius.circular(10.0),
-                                                      topLeft:
-                                                          Radius.circular(10.0),
-                                                    ),
-                                                    child: Align(
-                                                      alignment: getAlign(
-                                                          list[index]["VA"]),
-                                                      child: SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            1.2,
-                                                        child: userImg,
-                                                      ),
-                                                      widthFactor: 0.25,
-                                                      heightFactor: 0.25,
-                                                    ),
-                                                  ),
+                                                  userAvater(list[index]["VA"], context, userImg),
                                                   Container(
                                                     padding: EdgeInsets.all(3),
                                                     child: Text(
@@ -551,33 +477,7 @@ class _DashboardState extends State<Dashboard> {
                                             ),
                                             child: Column(
                                               children: [
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(10.0),
-                                                    // bottomLeft: Radius.circular(10.0),
-                                                    topRight:
-                                                        Radius.circular(10.0),
-                                                    // bottomRight: Radius.circular(10.0),
-                                                  ),
-                                                  child: Align(
-                                                    alignment: getAlign(
-                                                        list[index]["CA"]),
-                                                    child: SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              1.2,
-                                                      child: Image.asset(
-                                                        'assets/images/user.jpg',
-                                                      ),
-                                                    ),
-                                                    widthFactor: 0.25,
-                                                    heightFactor: 0.25,
-                                                  ),
-                                                ),
+                                                userAvater(list[index]["CA"], context, userImg),
                                                 Container(
                                                   padding: EdgeInsets.all(3),
                                                   child: Text(
