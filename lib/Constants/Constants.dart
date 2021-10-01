@@ -7,6 +7,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 List<Vendor> vendorList = [];
 LatLng userLoc;
+int userAv;
+String username;
+String useremail;
 
 class CustomRoute extends MaterialPageRoute {
   CustomRoute({WidgetBuilder builder}) : super(builder: builder);

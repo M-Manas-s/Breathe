@@ -140,6 +140,8 @@ class _VendorLocationState extends State<VendorLocation> {
                   });
                 },
                 onMapCreated: _onMapViewCreated,
+                myLocationButtonEnabled: true,
+                myLocationEnabled: true,
                 markers: markersList.toSet(),
                 initialCameraPosition: CameraPosition(
                   target: userLoc,
@@ -176,133 +178,137 @@ class _VendorLocationState extends State<VendorLocation> {
                     child: Form(
                       key: _formKey,
                       child: SingleChildScrollView(
-                        child: Container(
-                          height: size.height*0.5,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.05,
-                              ),
-                              Text(
-                                "Enter Your Complete Address",
-                                style: TextStyle(
-                                  color: Theme.of(context).accentColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.02,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Address1 Line ",
-                                      style: TextStyle(
-                                        color: Colors.blue[700],
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 2,
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                                      ),
-                                      child: TextFormField(
-                                        onChanged: (value) {
-                                          ad1 = value.trim();
-                                        },
-                                        cursorColor: Theme.of(context).accentColor,
-                                        textAlign: TextAlign.start,
-                                        decoration: InputDecoration(
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          errorBorder: InputBorder.none,
-                                          disabledBorder: InputBorder.none,
-                                          fillColor: Color(0xFFD2D2D2),
-                                          filled: true,
-                                          hintText: "Building Number",
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 10.0, horizontal: 20.0),
-                                        ),
-                                        validator: (String str) => null,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Address Line 2",
-                                      style: TextStyle(
-                                        color: Colors.blue[700],
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 2,
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                                      ),
-                                      child: TextFormField(
-                                        onChanged: (value) {
-                                          ad2 = value.trim();
-                                        },
-                                        cursorColor: Theme.of(context).accentColor,
-                                        textAlign: TextAlign.start,
-                                        decoration: InputDecoration(
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          errorBorder: InputBorder.none,
-                                          disabledBorder: InputBorder.none,
-                                          fillColor: Color(0xFFD2D2D2),
-                                          filled: true,
-                                          hintText: "Road/Locality",
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 10.0, horizontal: 20.0),
-                                        ),
-                                        validator: (String str) => null,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              GestureDetector(
-                                onPanDown: (var x) {
-                                    saveLocation();
-                                },
-                                child: CustomCard(
-                                  child: Text(
-                                    'Confirm',
-                                    style: TextStyle(color: Colors.white, fontSize: 17),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: size.height*0.5,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.05,
                                   ),
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 80,
+                                  Text(
+                                    "Enter Your Complete Address",
+                                    style: TextStyle(
+                                      color: Theme.of(context).accentColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
                                   ),
-                                  color: Color(0xFF1F4F99),
-                                  radius: 30.0,
-                                ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.02,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Address1 Line ",
+                                          style: TextStyle(
+                                            color: Colors.blue[700],
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 2,
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                                          ),
+                                          child: TextFormField(
+                                            onChanged: (value) {
+                                              ad1 = value.trim();
+                                            },
+                                            cursorColor: Theme.of(context).accentColor,
+                                            textAlign: TextAlign.start,
+                                            decoration: InputDecoration(
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              disabledBorder: InputBorder.none,
+                                              fillColor: Color(0xFFD2D2D2),
+                                              filled: true,
+                                              hintText: "Building Number",
+                                              contentPadding: EdgeInsets.symmetric(
+                                                  vertical: 10.0, horizontal: 20.0),
+                                            ),
+                                            validator: (String str) => null,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Address Line 2",
+                                          style: TextStyle(
+                                            color: Colors.blue[700],
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 2,
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                                          ),
+                                          child: TextFormField(
+                                            onChanged: (value) {
+                                              ad2 = value.trim();
+                                            },
+                                            cursorColor: Theme.of(context).accentColor,
+                                            textAlign: TextAlign.start,
+                                            decoration: InputDecoration(
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              disabledBorder: InputBorder.none,
+                                              fillColor: Color(0xFFD2D2D2),
+                                              filled: true,
+                                              hintText: "Road/Locality",
+                                              contentPadding: EdgeInsets.symmetric(
+                                                  vertical: 10.0, horizontal: 20.0),
+                                            ),
+                                            validator: (String str) => null,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  GestureDetector(
+                                    onPanDown: (var x) {
+                                        saveLocation();
+                                    },
+                                    child: CustomCard(
+                                      child: Text(
+                                        'Confirm',
+                                        style: TextStyle(color: Colors.white, fontSize: 17),
+                                      ),
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 80,
+                                      ),
+                                      color: Color(0xFF1F4F99),
+                                      radius: 30.0,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.05,
+                                  )
+                                ],
                               ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.05,
-                              )
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

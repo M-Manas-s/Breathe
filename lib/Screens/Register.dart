@@ -26,6 +26,7 @@ class _RegisterState extends State<Register> {
   bool spinner = false;
   bool state = true;
   bool absorb = false;
+  int avatar;
 
   FirebaseAuth auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
@@ -47,6 +48,7 @@ class _RegisterState extends State<Register> {
           'Name': name,
           "Email": email,
           "PhoneNumber": phno,
+          "Avatar": avatar,
         });
       else
         FirebaseFirestore.instance.collection('$user').add({
@@ -58,6 +60,10 @@ class _RegisterState extends State<Register> {
           "Quantity": 0,
           "Address1" : '',
           "Address2" : '',
+          "Avatar": avatar,
+          "Rating": 0,
+          "TotalRatings":0,
+          "Supplied": 15,
         });
       prefs.setString('Email', '$email');
 

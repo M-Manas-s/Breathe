@@ -9,9 +9,15 @@ class Vendor {
   final LatLng location;
   final String address;
   final int avatarCode;
+  final double rating;
+  final int supplied;
+  final int totalRatings;
 
   Vendor(
       {this.name,
+      this.totalRatings,
+      this.rating,
+      this.supplied,
       this.price,
       this.email,
       this.quantity,

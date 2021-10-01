@@ -60,7 +60,7 @@ class VendorCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            "Rating :      4.5",
+                            "Rating :      "+vendor.rating.toStringAsFixed(1),
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight:
@@ -77,7 +77,7 @@ class VendorCard extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        "Supplied: \t 30",
+                        "Supplied: \t "+vendor.supplied.toString(),
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight:

@@ -114,6 +114,7 @@ class _MapViewState extends State<MapView> {
         double price;
         int qu;
         String id;
+        int sup;
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -127,13 +128,22 @@ class _MapViewState extends State<MapView> {
             ve = doc['Email'];
             price = doc['Price'] * 1.00;
             qu = doc['Quantity'];
+            sup = doc['Supplied'];
           });
         });
 
         await FirebaseFirestore.instance
             .collection('Vendor')
             .doc(id)
-            .update({'Quantity': --qu}).catchError(
+            .update({'Quantity': --qu})
+            .catchError(
+                (error) => print("Failed to update user: $error"));
+
+        await FirebaseFirestore.instance
+            .collection('Vendor')
+            .doc(id)
+            .update({'Supplied': ++sup})
+            .catchError(
                 (error) => print("Failed to update user: $error"));
 
         await FirebaseFirestore.instance.collection('DealsHistory').add({
@@ -160,10 +170,105 @@ class _MapViewState extends State<MapView> {
         });
       },
     );
+    Size query = MediaQuery.of(context).size;
 
     AlertDialog alert = AlertDialog(
-      title: Text(
-          "Book Oxygen Cylinder with ${vendorList[selIndex].name.split(' ')[0]} ?"),
+      titlePadding: EdgeInsets.symmetric(horizontal: query.width*0.1,vertical: query.height*0.02),
+      contentPadding: EdgeInsets.symmetric(horizontal: query.width*0.05,vertical: 10),
+      actionsPadding: EdgeInsets.zero,
+      buttonPadding: EdgeInsets.zero,
+      title: Text("Book Oxygen Cylinder?"),
+      content: Container(
+        height: query.width*0.31,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                CustomCard(
+                  padding: EdgeInsets.zero,
+                  margin: EdgeInsets.zero,
+                  color: Colors.white,
+                  radius: 10.0,
+                  shadow: true,
+                  boxShadow: BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 3,
+                    blurRadius: 8,
+                    offset: Offset(3, 0),
+                  ),
+                  child: Column(
+                      children: [
+                  SizedBox(
+                  width: query.width * 0.24,
+                    height: query.width * 0.24,
+                    child: FittedBox(
+                      fit: BoxFit.fill,
+                      child: userAvater(
+                          vendorList[selIndex].avatarCode,
+                          context,
+                          userImg,),
+                    ),
+                  ),
+                    Container(
+                      padding: EdgeInsets.all(3),
+                      child: Text(
+                        vendorList[selIndex].name.split(' ')[0],
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ]),
+                ),
+              ],
+            ),
+            Icon(Icons.swap_horiz, size: 45),
+            Column(
+              children: [
+                CustomCard(
+                  padding: EdgeInsets.zero,
+                  margin: EdgeInsets.zero,
+                  color: Colors.white,
+                  radius: 10.0,
+                  shadow: true,
+                  boxShadow: BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 3,
+                    blurRadius: 8,
+                    offset: Offset(-3, 0), // changes position of shadow
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: query.width * 0.24,
+                        height: query.width * 0.24,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: userAvater(
+                            userAv,
+                            context,
+                            userImg,),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(3),
+                        child: Text(
+                          username.split(' ')[0],
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
       actions: [okButton, cancelButton()],
     );
 
@@ -200,7 +305,7 @@ class _MapViewState extends State<MapView> {
           body: Stack(
             children: [
               Container(
-                height: query.height * 0.65,
+                height: query.height * 0.63,
                 child: GoogleMap(
                   myLocationEnabled: true,
                   padding: EdgeInsets.only(bottom: mapPadding),
@@ -227,7 +332,7 @@ class _MapViewState extends State<MapView> {
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(30.0),
                           topRight: Radius.circular(30.0))),
-                  height: query.height * 0.4,
+                  height: query.height * 0.43,
                   padding: EdgeInsets.only(top: infovis ? 20 : 0),
                   child: Center(
                     child: !infovis
@@ -327,7 +432,8 @@ class _MapViewState extends State<MapView> {
                           )
                         : Container(
                             margin: EdgeInsets.symmetric(
-                                horizontal: query.width * 0.05),
+                                horizontal: query.width * 0.05,
+                                vertical: query.height * 0.02),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -339,7 +445,8 @@ class _MapViewState extends State<MapView> {
                                   height: query.height * 0.08,
                                   width: query.width,
                                   child: GestureDetector(
-                                    onTap: () {
+                                    onPanDown: (var x) {
+                                      print("Clk");
                                       showConfirmationAlertDialog(context);
                                     },
                                     child: CustomCard(
@@ -396,13 +503,13 @@ class _MapViewState extends State<MapView> {
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(30))),
+                                  BorderRadius.all(Radius.circular(300))),
                           width: query.height * 0.2,
                           height: query.height * 0.2,
                           child: Center(
                             child: AnimateIcons(
-                              startIcon: Icons.search,
-                              endIcon: Icons.done,
+                              startIcon: Icons.circle,
+                              endIcon: Icons.check_circle,
                               size: 100.0,
                               controller: ic,
                               // add this tooltip for the start icon
@@ -417,10 +524,10 @@ class _MapViewState extends State<MapView> {
                                 print("Clicked on Close Icon");
                                 return true;
                               },
-                              duration: Duration(milliseconds: 600),
-                              startIconColor: Theme.of(context).accentColor,
+                              duration: Duration(milliseconds: 400),
+                              startIconColor: Colors.green,
                               endIconColor: Colors.green,
-                              clockwise: false,
+                              clockwise: true,
                             ),
                           ),
                         ),

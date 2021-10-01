@@ -28,6 +28,9 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
   }
 
   readData() async {
+
+    vendorList.clear();
+
     await FirebaseFirestore.instance
         .collection('Vendor')
         .get()
@@ -42,6 +45,9 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
               location: stringToLatLng(doc['Location']),
               quantity: doc['Quantity'],
               address: doc['Address1'] + " " + doc['Address2'],
+              rating: doc['Rating'],
+              totalRatings: doc['TotalRatings'],
+              supplied: doc['Supplied'],
               avatarCode: doc['Avatar']));
       });
     });
