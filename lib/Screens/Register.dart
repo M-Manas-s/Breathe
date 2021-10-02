@@ -7,7 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Dashboard.dart';
+import 'Home.dart';
 import 'VendorDashboard.dart';
 
 class Register extends StatefulWidget {
@@ -74,7 +74,7 @@ class _RegisterState extends State<Register> {
       if (newuser != null) {
         if ( user=='Customer' )
         Navigator.pushAndRemoveUntil(
-            context, CustomRoute(builder: (_) => Dashboard()), (r) => false);
+            context, CustomRoute(builder: (_) => Home()), (r) => false);
         else
           Navigator.pushAndRemoveUntil(
               context, CustomRoute(builder: (_) => VendorDashboard()), (r) => false);

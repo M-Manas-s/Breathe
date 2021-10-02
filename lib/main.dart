@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'package:breathe/Screens/Dashboard.dart';
+import 'package:breathe/Screens/Home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'Constants/Constants.dart';
 import 'Screens/LandingPage.dart';
 import 'Screens/Login.dart';
 import 'Screens/Register.dart';
@@ -31,16 +32,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         routes: {
           LandingPage.id: (context) => LandingPage(),
           Login.id: (context) => Login(),
           Register.id: (context) => Register(),
-          Dashboard.id: (context) => Dashboard(),
+          Home.id: (context) => Home(),
           MapView.id : (context) => MapView(),
+          Search.id : (context) => Search()
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,
           accentColor: Color(0xFF1F4F99),
+          scaffoldBackgroundColor: Colors.white,
         ),
         home: SplashScreen());
   }
@@ -53,18 +57,17 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool visible = true;
-  String email;
   String user;
 
   navigateToDashboard(){
     user == "Customer" ? Navigator.pushAndRemoveUntil(
-        context, LandingPageRoute(builder: (_) => Dashboard()), (r) => false) : Navigator.pushAndRemoveUntil(
+        context, LandingPageRoute(builder: (_) => Home()), (r) => false) : Navigator.pushAndRemoveUntil(
         context, LandingPageRoute(builder: (_) => VendorDashboard()), (r) => false);
   }
 
   prefs() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    email = prefs.getString('Email')??"";
+    useremail = prefs.getString('Email')??"";
     user = prefs.getString('User')??"";
   }
 
@@ -80,7 +83,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(const Duration(milliseconds: 2500), () {
       setState(() {
-        email == "" ? Navigator.pushAndRemoveUntil(
+        //Navigator.pushNamed(context, Search.id);
+        useremail == "" ? Navigator.pushAndRemoveUntil(
             context, LandingPageRoute(builder: (_) => LandingPage()), (r) => false) : navigateToDashboard() ;
       });
     });

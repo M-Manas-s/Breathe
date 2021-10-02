@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Dashboard.dart';
+import 'Home.dart';
 import 'Register.dart';
 import 'VendorDashboard.dart';
 
@@ -67,10 +67,11 @@ class _LoginState extends State<Login> {
         });
 
         prefs.setString('Email', email);
+
         if (authUser != null) {
           user == "Customer"
               ? Navigator.pushAndRemoveUntil(context,
-                  DashboardRoute(builder: (_) => Dashboard()), (r) => false)
+                  DashboardRoute(builder: (_) => Home()), (r) => false)
               : Navigator.pushAndRemoveUntil(
                   context,
                   DashboardRoute(builder: (_) => VendorDashboard()),

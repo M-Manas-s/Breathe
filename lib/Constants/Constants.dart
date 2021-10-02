@@ -10,6 +10,7 @@ LatLng userLoc;
 int userAv;
 String username;
 String useremail;
+Image userImg;
 
 class CustomRoute extends MaterialPageRoute {
   CustomRoute({WidgetBuilder builder}) : super(builder: builder);

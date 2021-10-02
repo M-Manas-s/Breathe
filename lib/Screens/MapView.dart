@@ -11,7 +11,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:animate_icons/animate_icons.dart';
 
-import 'Dashboard.dart';
+import 'Home.dart';
 
 class MapView extends StatefulWidget {
   static String id = 'MapViewView';
@@ -84,7 +84,7 @@ class _MapViewState extends State<MapView> {
       child: Text("OK"),
       onPressed: () {
         Navigator.pushAndRemoveUntil(
-            context, CustomRoute(builder: (_) => Dashboard()), (r) => false);
+            context, CustomRoute(builder: (_) => Home()), (r) => false);
       },
     );
 
@@ -166,7 +166,7 @@ class _MapViewState extends State<MapView> {
 
         Timer(const Duration(milliseconds: 1500), () {
           Navigator.pushAndRemoveUntil(
-              context, CustomRoute(builder: (_) => Dashboard()), (r) => false);
+              context, CustomRoute(builder: (_) => Home()), (r) => false);
         });
       },
     );
