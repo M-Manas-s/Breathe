@@ -40,70 +40,123 @@ class VendorCard extends StatelessWidget {
                 ),
               ],
             ),
-            Container(
-              margin: EdgeInsets.only(left: 20),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Row(
-                  children: [
-                    Text(
-                      "Rating :      " + vendor.rating.toStringAsFixed(1),
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                    ),
-                    SizedBox(
-                      width: 3,
-                    ),
-                    Icon(
-                      Icons.star,
-                      size: 20,
-                      color: Colors.amber,
-                    )
-                  ],
-                ),
-                Text(
-                  "Supplied: \t " + vendor.supplied.toString(),
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  "Available: \t" + vendor.quantity.toString(),
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  "Distance: \t ${calculateDistance(vendor.location, userLoc).toStringAsFixed(2)} km",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                ),
-                GestureDetector(
-                  onPanDown: (var x) {
-                    launch('tel:${vendor.phno}');
-                  },
-                  child: CustomCard(
-                    margin: EdgeInsets.zero,
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                    radius: 20,
-                    color: Theme.of(context).accentColor,
+            Expanded(
+              child: Container(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Container(
+                    padding: EdgeInsets.symmetric(horizontal: query.width * 0.04, vertical: query.height * 0.01),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.phone_rounded,
-                          color: Colors.white,
-                          size: 20,
+                        Text(
+                          "Rating :",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                         ),
-                        SizedBox(
-                          width: 10,
+                        Row(
+                          children: [
+                            Text(
+                              "${vendor.rating.toStringAsFixed(1)}",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                            ),
+                            SizedBox(
+                              width: 3,
+                            ),
+                            Icon(
+                              Icons.star,
+                              size: 18,
+                              color: Colors.amber,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(left: query.width * 0.04, bottom: query.width * 0.01, right: query.width * 0.04),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Supplied:",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                         ),
                         Text(
-                          "Call ${vendor.name.split(' ')[0]} ",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 19,
-                          ),
+                          vendor.supplied.toString(),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ]),
+                  Container(
+                    padding: EdgeInsets.only(left: query.width * 0.04, bottom: query.width * 0.01, right: query.width * 0.04),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Available:",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                          vendor.quantity.toString(),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(left: query.width * 0.04, bottom: query.width * 0.02, right: query.width * 0.04),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Distance:",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                          "${calculateDistance(vendor.location, userLoc).toStringAsFixed(2)} km",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onPanDown: (var x) {
+                      launch('tel:${vendor.phno}');
+                    },
+                    child: CustomCard(
+                      margin: EdgeInsets.only(left: query.width*0.04),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      radius: 20,
+                      color: Theme.of(context).accentColor,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.phone_rounded,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "Call ${vendor.name.split(' ')[0]} ",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 19,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ]),
+              ),
             )
           ],
         ),
