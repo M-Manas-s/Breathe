@@ -15,6 +15,8 @@ import 'Home.dart';
 
 class MapView extends StatefulWidget {
   static String id = 'MapViewView';
+  int defaultIndex = -1;
+  bool preLoaded = false;
 
   @override
   _MapViewState createState() => _MapViewState();
@@ -439,7 +441,6 @@ class _MapViewState extends State<MapView> {
                               children: [
                                 VendorCard(
                                   vendor: vendorList[selIndex],
-                                  userImg: userImg,
                                 ),
                                 Container(
                                   height: query.height * 0.08,
