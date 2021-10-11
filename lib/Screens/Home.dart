@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:ui';
 import 'dart:math' as math;
 
-import 'package:breathe/Classes/CustomCard.dart';
 import 'package:breathe/Classes/Drawer.dart';
 import 'package:breathe/Screens/VendorPage.dart';
 import 'package:flutter/rendering.dart';
-import 'package:intl/intl.dart';
 import 'package:breathe/Constants/Constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +26,7 @@ class _HomeState extends State<Home> {
   bool loading = false;
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   int activeTab=0;
+  bool queueReload = false;
   List<String> pageLabel = [
     "Fulfilled Oxygen Supplies",
     "Order History",
@@ -53,6 +52,7 @@ class _HomeState extends State<Home> {
   Future getData() async {
     setState(() {
       loading = true;
+      list.clear();
     });
 
     List<String> ve = [];
@@ -72,8 +72,10 @@ class _HomeState extends State<Home> {
       querySnapshot.docs.forEach((doc) {
         username = doc['Name'];
         userAv = doc['Avatar'];
+        phno = doc['PhoneNumber'];
       });
     });
+    print(username);
 
     await FirebaseFirestore.instance
         .collection('DealsHistory')
@@ -143,10 +145,6 @@ class _HomeState extends State<Home> {
 
     return WillPopScope(
       onWillPop: () async {
-        if ( activeTab == 3 )
-          setState(() {
-            activeTab = 0;
-          });
         if ( _key.currentState.isDrawerOpen )
           Navigator.pop(context);
         return false;
@@ -156,6 +154,12 @@ class _HomeState extends State<Home> {
         drawer: !loading ? CustomDrawer(activeInd: activeTab, userImg: userImg, change: (int index) {
           setState(() {
             activeTab = index;
+            if ( index == 3 )
+                setState(() {
+                  queueReload = true;
+                });
+            if ( index == 0 && queueReload )
+              getData();
           });
           Timer(const Duration(milliseconds: 100), () {
               Navigator.pop(context);
@@ -174,14 +178,14 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          activeTab!=3 ? Container(  // AppBar
+          Container(  // AppBar
             margin: EdgeInsets.only(top: query.height*0.07),
             padding: EdgeInsets.symmetric(horizontal: query.width*0.08),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  onPanDown: (var x) => _key.currentState.openDrawer(),
+                  onPanDown: (var x) => !loading ? _key.currentState.openDrawer() : {},
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -227,7 +231,7 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-          ) : Container(),
+          ),
           tabs(activeTab),
           Container(
             decoration: BoxDecoration(
@@ -242,7 +246,7 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-            margin: EdgeInsets.symmetric(vertical: query.height * (activeTab != 3 ? 0.16 : 0.07), horizontal: query.width*0.08),
+            margin: EdgeInsets.symmetric(vertical: query.height * 0.16, horizontal: query.width*0.08),
             child: SizedBox(
               height: query.height*0.08,
               child: Center(

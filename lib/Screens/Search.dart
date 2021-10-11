@@ -79,7 +79,7 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
     if (vendorList.length > 0)
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => MapView()),
+          MaterialPageRoute(builder: (context) => MapView(preLoaded: false,)),
           ModalRoute.withName(MapView.id));
   }
 

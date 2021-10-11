@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:breathe/Screens/Home.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,8 +39,8 @@ class MyApp extends StatelessWidget {
           Login.id: (context) => Login(),
           Register.id: (context) => Register(),
           Home.id: (context) => Home(),
-          MapView.id : (context) => MapView(),
-          Search.id : (context) => Search()
+          MapView.id: (context) => MapView(),
+          Search.id: (context) => Search()
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -59,16 +60,16 @@ class _SplashScreenState extends State<SplashScreen> {
   bool visible = true;
   String user;
 
-  navigateToDashboard(){
-    user == "Customer" ? Navigator.pushAndRemoveUntil(
-        context, LandingPageRoute(builder: (_) => Home()), (r) => false) : Navigator.pushAndRemoveUntil(
-        context, LandingPageRoute(builder: (_) => VendorDashboard()), (r) => false);
+  navigateToDashboard() {
+    user == "Customer"
+        ? Navigator.pushAndRemoveUntil(context, LandingPageRoute(builder: (_) => Home()), (r) => false)
+        : Navigator.pushAndRemoveUntil(context, LandingPageRoute(builder: (_) => VendorDashboard()), (r) => false);
   }
 
-  prefs() async{
+  prefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    useremail = prefs.getString('Email')??"";
-    user = prefs.getString('User')??"";
+    useremail = prefs.getString('Email') ?? "";
+    user = prefs.getString('User') ?? "";
   }
 
   @override
@@ -84,8 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(milliseconds: 2500), () {
       setState(() {
         //Navigator.pushNamed(context, Search.id);
-        useremail == "" ? Navigator.pushAndRemoveUntil(
-            context, LandingPageRoute(builder: (_) => LandingPage()), (r) => false) : navigateToDashboard() ;
+        useremail == "" ? Navigator.pushAndRemoveUntil(context, LandingPageRoute(builder: (_) => LandingPage()), (r) => false) : navigateToDashboard();
       });
     });
   }
@@ -106,30 +106,25 @@ class _SplashScreenState extends State<SplashScreen> {
           opacity: visible ? 0.0 : 1.0,
           duration: Duration(milliseconds: 900),
           child: Container(
-            color : Colors.transparent,
+            color: Colors.transparent,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Expanded(
                   flex: 5,
                   child: Container(
-                    padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.2),
+                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.2),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(color: Color(0xFFDEDDDD)),
-                      borderRadius: BorderRadius.vertical(
-                          bottom: Radius.elliptical(
-                              MediaQuery.of(context).size.width, 250.0)),
+                      borderRadius: BorderRadius.vertical(bottom: Radius.elliptical(MediaQuery.of(context).size.width, 250.0)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Hero(
                           tag: 'icon',
-                          child: Container(
-                              child: Image.asset('assets/images/icon.png'),
-                              width: 130),
+                          child: Container(child: Image.asset('assets/images/icon.png'), width: 130),
                         ),
                         Text(
                           'Breathe',

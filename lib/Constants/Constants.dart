@@ -10,6 +10,7 @@ LatLng userLoc;
 int userAv;
 String username;
 String useremail;
+String phno;
 Image userImg;
 
 class CustomRoute extends MaterialPageRoute {

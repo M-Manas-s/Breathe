@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skeleton_loader/skeleton_loader.dart';
+import 'MapView.dart';
 
 class VendorPage extends StatefulWidget {
   @override
@@ -242,7 +243,7 @@ class _VendorPageState extends State<VendorPage> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
                                       margin: EdgeInsets.only(
-                                        bottom: query.width * 0.03,
+                                        bottom: query.width * 0.04,
                                         left: query.width * 0.04,
                                         right: query.width * 0.04,
                                       ),
@@ -252,10 +253,10 @@ class _VendorPageState extends State<VendorPage> {
                                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.grey.withOpacity(0.5),
+                                            color: Colors.black.withOpacity(0.4),
                                             spreadRadius: 1,
-                                            blurRadius: 3,
-                                            offset: Offset(0, 2),
+                                            blurRadius: 5,
+                                            offset: Offset(0, 4),
                                           ),
                                         ],
                                       ),
@@ -390,7 +391,12 @@ class _VendorPageState extends State<VendorPage> {
                                                               ),
                                                             )),
                                                         GestureDetector(
-                                                            onPanDown: (var x) {},
+                                                            onPanDown: (var x) {
+                                                              Navigator.pushAndRemoveUntil(
+                                                                  context,
+                                                                  MaterialPageRoute(builder: (context) => MapView(preLoaded: true,selVendor:vendorList[index],)),
+                                                                  ModalRoute.withName(MapView.id));
+                                                            },
                                                             child: CustomCard(
                                                               margin: EdgeInsets.symmetric(horizontal: query.width * 0.02),
                                                               padding: EdgeInsets.symmetric(horizontal: query.width * 0.03, vertical: 7),
@@ -405,7 +411,7 @@ class _VendorPageState extends State<VendorPage> {
                                                                     size: 18,
                                                                   ),
                                                                   Text(
-                                                                    " Locate ",
+                                                                    " Locate",
                                                                     style: TextStyle(
                                                                       color: Colors.white,
                                                                       fontWeight: FontWeight.w600,

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:breathe/Classes/CustomCard.dart';
+import 'package:breathe/Classes/Vendor.dart';
 import 'package:breathe/Classes/VendorCard.dart';
 import 'package:breathe/Constants/Constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,8 +16,10 @@ import 'Home.dart';
 
 class MapView extends StatefulWidget {
   static String id = 'MapViewView';
-  int defaultIndex = -1;
-  bool preLoaded = false;
+  final Vendor selVendor;
+  final bool preLoaded;
+
+  const MapView({Key key, this.selVendor, this.preLoaded}) : super(key: key);
 
   @override
   _MapViewState createState() => _MapViewState();
@@ -34,6 +37,8 @@ class _MapViewState extends State<MapView> {
 
   @override
   void initState() {
+    if ( widget.preLoaded )
+      activeIndex(vendorList.indexOf(widget.selVendor));
     super.initState();
     ic = AnimateIconController();
     userImg = Image.asset('assets/images/user.jpg');
@@ -364,7 +369,6 @@ class _MapViewState extends State<MapView> {
                                 flex: 5,
                                 child: Container(
                                   margin: EdgeInsets.symmetric(horizontal: 30),
-                                  //padding: EdgeInsets.symmetric(horizontal: 5),
                                   decoration: BoxDecoration(
                                       border: Border.all(
                                           color: Colors.black, width: 2),
