@@ -77,10 +77,12 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
       loaded = true;
     });
     if (vendorList.length > 0)
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => MapView(preLoaded: false,)),
-          ModalRoute.withName(MapView.id));
+      Future.delayed(Duration(seconds: 1), (){
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => MapView(preLoaded: false,)),
+            ModalRoute.withName(MapView.id));
+      });
   }
 
   @override

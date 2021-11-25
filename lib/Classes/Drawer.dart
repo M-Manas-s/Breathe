@@ -10,7 +10,11 @@ class CustomDrawer extends StatelessWidget {
   FirebaseAuth _auth = FirebaseAuth.instance;
   Function change;
 
-  CustomDrawer({this.activeInd, this.userImg, this.change,});
+  CustomDrawer({
+    this.activeInd,
+    this.userImg,
+    this.change,
+  });
 
   List<dynamic> optionsData = [
     {"icon": Icons.dashboard, "label": "Dashboard"},
@@ -33,9 +37,7 @@ class CustomDrawer extends StatelessWidget {
           children: [
             Icon(optionsData[index]["icon"],
                 size: activeInd == index ? 42 : 32,
-                color: activeInd == index
-                    ? Theme.of(context).accentColor
-                    : Colors.black),
+                color: activeInd == index ? Color(0xFF1F4F99) : Colors.black),
             SizedBox(
               width: 15,
             ),
@@ -43,9 +45,8 @@ class CustomDrawer extends StatelessWidget {
                 style: TextStyle(
                     fontSize: activeInd == index ? 27 : 22,
                     fontWeight: FontWeight.w700,
-                    color: activeInd == index
-                        ? Theme.of(context).accentColor
-                        : Colors.black)),
+                    color:
+                        activeInd == index ? Color(0xFF1F4F99) : Colors.black)),
           ],
         ),
       ),
@@ -142,8 +143,10 @@ class CustomDrawer extends StatelessWidget {
                   itemBuilder: (BuildContext context, int index) {
                     return Column(
                       children: [
-                        options(context,index),
-                        SizedBox(height: 20,)
+                        options(context, index),
+                        SizedBox(
+                          height: 20,
+                        )
                       ],
                     );
                   },

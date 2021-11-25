@@ -20,8 +20,8 @@ class VendorCard extends StatelessWidget {
             Column(
               children: [
                 SizedBox(
-                  width: query.width * 0.38,
-                  height: query.width * 0.38,
+                  width: query.width * 0.33,
+                  height: query.width * 0.33,
                   child: FittedBox(
                     fit: BoxFit.fill,
                     child: userAvater(vendor.avatarCode, context, userImg, br: BorderRadius.circular(100.0)),
@@ -148,7 +148,7 @@ class VendorCard extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
-                              fontSize: 19,
+                              fontSize: 17,
                             ),
                           ),
                         ],
@@ -162,7 +162,7 @@ class VendorCard extends StatelessWidget {
         ),
       ),
       SizedBox(
-        height: 10,
+        height: 0,
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.start,

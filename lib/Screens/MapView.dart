@@ -34,11 +34,11 @@ class _MapViewState extends State<MapView> {
   bool booked = false;
   bool resizeMap = false;
   Image userImg;
+  int rating = -1;
 
   @override
   void initState() {
-    if ( widget.preLoaded )
-      activeIndex(vendorList.indexOf(widget.selVendor));
+    if (widget.preLoaded) activeIndex(vendorList.indexOf(widget.selVendor));
     super.initState();
     ic = AnimateIconController();
     userImg = Image.asset('assets/images/user.jpg');
@@ -162,31 +162,23 @@ class _MapViewState extends State<MapView> {
 
         setState(() {
           spinner = false;
-          booked = true;
         });
 
-        Timer(const Duration(milliseconds: 200), () {
-          setState(() {
-            ic.animateToEnd();
-          });
-        });
-
-        Timer(const Duration(milliseconds: 1500), () {
-          Navigator.pushAndRemoveUntil(
-              context, CustomRoute(builder: (_) => Home()), (r) => false);
-        });
+        showRateAlertDialog(context);
       },
     );
     Size query = MediaQuery.of(context).size;
 
     AlertDialog alert = AlertDialog(
-      titlePadding: EdgeInsets.symmetric(horizontal: query.width*0.1,vertical: query.height*0.02),
-      contentPadding: EdgeInsets.symmetric(horizontal: query.width*0.05,vertical: 10),
+      titlePadding: EdgeInsets.symmetric(
+          horizontal: query.width * 0.1, vertical: query.height * 0.02),
+      contentPadding:
+          EdgeInsets.symmetric(horizontal: query.width * 0.05, vertical: 10),
       actionsPadding: EdgeInsets.zero,
       buttonPadding: EdgeInsets.zero,
       title: Text("Book Oxygen Cylinder?"),
       content: Container(
-        height: query.width*0.31,
+        height: query.width * 0.31,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -205,19 +197,19 @@ class _MapViewState extends State<MapView> {
                     blurRadius: 8,
                     offset: Offset(3, 0),
                   ),
-                  child: Column(
-                      children: [
-                  SizedBox(
-                  width: query.width * 0.24,
-                    height: query.width * 0.24,
-                    child: FittedBox(
-                      fit: BoxFit.fill,
-                      child: userAvater(
+                  child: Column(children: [
+                    SizedBox(
+                      width: query.width * 0.24,
+                      height: query.width * 0.24,
+                      child: FittedBox(
+                        fit: BoxFit.fill,
+                        child: userAvater(
                           vendorList[selIndex].avatarCode,
                           context,
-                          userImg,),
+                          userImg,
+                        ),
+                      ),
                     ),
-                  ),
                     Container(
                       padding: EdgeInsets.all(3),
                       child: Text(
@@ -256,7 +248,8 @@ class _MapViewState extends State<MapView> {
                           child: userAvater(
                             userAv,
                             context,
-                            userImg,),
+                            userImg,
+                          ),
                         ),
                       ),
                       Container(
@@ -285,6 +278,170 @@ class _MapViewState extends State<MapView> {
         return alert;
       },
     );
+  }
+
+  showRateAlertDialog(BuildContext context) {
+
+    Widget cancel = TextButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Timer(const Duration(milliseconds: 300), () {
+          Navigator.pushAndRemoveUntil(
+              context, CustomRoute(builder: (_) => Home()), (r) => false);
+        });
+      },
+    );
+
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () async {
+        Navigator.of(context).pop();
+        setState(() {
+          spinner = true;
+        });
+
+        String ve;
+        double price;
+        int qu;
+        String id;
+        int sup;
+        double rat;
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        await FirebaseFirestore.instance
+            .collection('Vendor')
+            .where('Name', isEqualTo: vendorList[selIndex].name)
+            .get()
+            .then((QuerySnapshot querySnapshot) {
+          querySnapshot.docs.forEach((doc) {
+            id = doc.id;
+            ve = doc['Email'];
+            price = doc['Price'] * 1.00;
+            qu = doc['Quantity'];
+            sup = doc['Supplied'];
+            rat = doc['Rating'];
+          });
+        });
+
+        double nrating = rat * (sup - 1) + rating;
+        nrating = nrating / (sup);
+
+        if (rating != -1)
+          await FirebaseFirestore.instance
+              .collection('Vendor')
+              .doc(id)
+              .update({'Rating': nrating}).catchError(
+                  (error) => print("Failed to update user: $error"));
+
+        setState(() {
+          spinner = false;
+          booked = true;
+        });
+
+        Timer(const Duration(milliseconds: 200), () {
+          setState(() {
+            ic.animateToEnd();
+          });
+        });
+
+        Timer(const Duration(milliseconds: 1500), () {
+          Navigator.pushAndRemoveUntil(
+              context, CustomRoute(builder: (_) => Home()), (r) => false);
+        });
+      },
+    );
+    Size query = MediaQuery.of(context).size;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context)
+    {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            titlePadding: EdgeInsets.symmetric(
+                horizontal: query.width * 0.1, vertical: query.height * 0.02),
+            contentPadding:
+            EdgeInsets.symmetric(horizontal: query.width * 0.05, vertical: 10),
+            actionsPadding: EdgeInsets.zero,
+            buttonPadding: EdgeInsets.zero,
+            title: Text("Rate the Vendor"),
+            content: Container(
+              height: query.height * 0.05,
+              width: query.width * 0.9,
+              child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        child: Icon(
+                          rating > 0 ? Icons.star : Icons.star_border,
+                          color: rating > 0 ? Colors.yellow : Colors.black,
+                          size: 45,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            rating = 1;
+                          });
+                        },
+                      ),
+                      GestureDetector(
+                        child: Icon(
+                          rating > 1 ? Icons.star : Icons.star_border,
+                          color: rating > 1 ? Colors.yellow : Colors.black,
+                          size: 45,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            rating = 2;
+                          });
+                        },
+                      ),
+                      GestureDetector(
+                        child: Icon(
+                          rating > 2 ? Icons.star : Icons.star_border,
+                          color: rating > 2 ? Colors.yellow : Colors.black,
+                          size: 45,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            rating = 3;
+                          });
+                        },
+                      ),
+                      GestureDetector(
+                        child: Icon(
+                          rating > 3 ? Icons.star : Icons.star_border,
+                          color: rating > 3 ? Colors.yellow : Colors.black,
+                          size: 45,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            rating = 4;
+                          });
+                        },
+                      ),
+                      GestureDetector(
+                        child: Icon(
+                          rating > 4 ? Icons.star : Icons.star_border,
+                          color: rating > 4 ? Colors.yellow : Colors.black,
+                          size: 45,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            rating = 5;
+                          });
+                        },
+                      ),
+                    ],
+                  )),
+            ),
+            actions: [okButton, cancel],
+          );
+        },
+      );
+    });
   }
 
   @override
@@ -340,7 +497,6 @@ class _MapViewState extends State<MapView> {
                           topLeft: Radius.circular(30.0),
                           topRight: Radius.circular(30.0))),
                   height: query.height * 0.43,
-                  padding: EdgeInsets.only(top: infovis ? 20 : 0),
                   child: Center(
                     child: !infovis
                         ? Column(
@@ -451,7 +607,6 @@ class _MapViewState extends State<MapView> {
                                   width: query.width,
                                   child: GestureDetector(
                                     onPanDown: (var x) {
-                                      print("Clk");
                                       showConfirmationAlertDialog(context);
                                     },
                                     child: CustomCard(
