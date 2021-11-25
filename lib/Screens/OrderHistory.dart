@@ -1,8 +1,15 @@
+import 'dart:io';
+
 import 'package:breathe/Classes/CustomCard.dart';
 import 'package:breathe/Constants/Constants.dart';
+import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:skeleton_loader/skeleton_loader.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 
 class OrderHistory extends StatefulWidget {
   List<dynamic> list = [];
@@ -22,6 +29,69 @@ class _OrderHistoryState extends State<OrderHistory> {
     super.initState();
     perList =
         widget.list.where((element) => element["CN"] == username).toList();
+  }
+
+  void _showBasicsFlash(String name,{
+    Duration duration,
+    flashStyle = FlashBehavior.floating,
+  }) {
+    showFlash(
+      context: context,
+      duration: Duration(seconds: 3),
+      builder: (context, controller) {
+        return Flash(
+          controller: controller,
+          behavior: flashStyle,
+          position: FlashPosition.bottom,
+          boxShadows: kElevationToShadow[4],
+          horizontalDismissDirection: HorizontalDismissDirection.horizontal,
+          child: FlashBar(
+            content: Text('Saved to $name'),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _downloadInvoice(dynamic data) async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted || status.isRestricted) {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.storage,
+      ].request();
+      print(statuses[
+          Permission.storage]); // it should print PermissionStatus.granted
+    }
+    print(status);
+
+    final doc = pw.Document();
+
+    Image imp = Image.asset('assets/images/icon.png');
+
+    doc.addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Center(
+              child: pw.Column(
+                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  children: [
+                pw.Text('Breathe', style: pw.TextStyle(fontSize: 60,decoration: pw.TextDecoration.underline),),
+                pw.Text('Order Receipt', style: pw.TextStyle(fontSize: 40,decoration: pw.TextDecoration.underline)),
+                pw.SizedBox(height: 40),
+                pw.Text(
+                    "Date:  ${DateFormat('d/M/y').format(DateTime.parse(data["DateTime"]))}",style: pw.TextStyle(fontSize: 20)),
+                pw.Text("Vendor: ${data["VN"]}\nCustomer: $username",style: pw.TextStyle(fontSize: 20)),
+                pw.Text("Price:  Rs.${data["Price"]}",style: pw.TextStyle(fontSize: 20))
+              ])); // Center
+        }));
+
+    final path = await DownloadsPathProvider.downloadsDirectory;
+    print(path.path);
+    String name = data["VN"].split(' ')[0]+username.split(' ')[0]+"Receipt-"+ DateFormat('MMMd').format(DateTime.parse(data["DateTime"]));
+    final file = File('${path.path}/$name.pdf');
+    await file.writeAsBytes(await doc.save());
+    _showBasicsFlash(path.path + name + ".pdf");
   }
 
   @override
@@ -176,35 +246,41 @@ class _OrderHistoryState extends State<OrderHistory> {
                                         )
                                       ],
                                     ),
-                                    CustomCard(
-                                        radius: 20,
-                                        padding: EdgeInsets.all(7),
-                                        margin: EdgeInsets.only(
-                                            left: query.width * 0.2,
-                                            right: query.width * 0.04,
-                                            top: query.height * 0.02,
-                                            bottom: query.height * 0.02),
-                                        color: Color(0xfffa6e64),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.file_download,
-                                              size: 20,
-                                            ),
-                                            Text(
-                                              " Invoice",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            SizedBox(
-                                              width: query.width * 0.04,
-                                            )
-                                          ],
-                                        ))
+                                    GestureDetector(
+                                      onPanDown: (var x) {
+                                        _downloadInvoice(widget.list[index]);
+                                      },
+                                      child: CustomCard(
+                                          radius: 20,
+                                          padding: EdgeInsets.all(7),
+                                          margin: EdgeInsets.only(
+                                              left: query.width * 0.2,
+                                              right: query.width * 0.04,
+                                              top: query.height * 0.02,
+                                              bottom: query.height * 0.02),
+                                          color: Color(0xfffa6e64),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.file_download,
+                                                size: 20,
+                                              ),
+                                              Text(
+                                                " Invoice",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              SizedBox(
+                                                width: query.width * 0.04,
+                                              )
+                                            ],
+                                          )),
+                                    )
                                   ],
                                 ),
                               ),

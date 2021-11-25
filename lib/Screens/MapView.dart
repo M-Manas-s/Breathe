@@ -285,7 +285,18 @@ class _MapViewState extends State<MapView> {
     Widget cancel = TextButton(
       child: Text("Cancel"),
       onPressed: () {
-        Timer(const Duration(milliseconds: 300), () {
+        Navigator.pop(context);
+        setState(() {
+          booked = true;
+        });
+
+        Timer(const Duration(milliseconds: 200), () {
+          setState(() {
+            ic.animateToEnd();
+          });
+        });
+
+        Timer(const Duration(milliseconds: 1500), () {
           Navigator.pushAndRemoveUntil(
               context, CustomRoute(builder: (_) => Home()), (r) => false);
         });

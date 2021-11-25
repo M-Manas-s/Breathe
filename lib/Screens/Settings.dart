@@ -203,13 +203,17 @@ class _UserSettingsState extends State<UserSettings> {
                                                             userAvater(avlist[index], context, userImg, br: BorderRadius.circular(100.0)),
                                                           ]),
                                                         ),
-                                                        Container(
-                                                          decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.all(Radius.circular(45.0))),
-                                                          child: CircleAvatar(
-                                                            backgroundColor: Colors.black.withOpacity(0),
-                                                            radius: 45.0,
-                                                          ),
-                                                        ),
+                                                        Positioned.fill(
+                                                            left: 0,
+                                                            right: 0,
+                                                            top: 0,
+                                                            bottom: 0,
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                color: Colors.black.withOpacity(0.5),
+                                                                borderRadius: BorderRadius.circular(300)
+                                                              ),
+                                                            )),
                                                         Positioned.fill(
                                                           child: Align(
                                                             alignment: Alignment.center,
@@ -247,8 +251,7 @@ class _UserSettingsState extends State<UserSettings> {
                       ),
                       GestureDetector(
                         onTap: () async {
-
-                          _showBasicsFlash(duration: Duration(seconds: 2),flashStyle: FlashBehavior.fixed);
+                          _showBasicsFlash(duration: Duration(seconds: 2), flashStyle: FlashBehavior.fixed);
 
                           String id;
                           await FirebaseFirestore.instance.collection('Customer').where('Email', isEqualTo: useremail).get().then((QuerySnapshot querySnapshot) {
@@ -258,22 +261,13 @@ class _UserSettingsState extends State<UserSettings> {
                           });
 
                           if (localAvatarCode != userAv)
-                            await FirebaseFirestore.instance
-                                .collection('Customer')
-                                .doc(id)
-                                .update({'Avatar': localAvatarCode}).catchError((error) => print("Failed to update user: $error"));
+                            await FirebaseFirestore.instance.collection('Customer').doc(id).update({'Avatar': localAvatarCode}).catchError((error) => print("Failed to update user: $error"));
 
                           if (localName != username)
-                            await FirebaseFirestore.instance
-                                .collection('Customer')
-                                .doc(id)
-                                .update({'Name': localName}).catchError((error) => print("Failed to update user: $error"));
+                            await FirebaseFirestore.instance.collection('Customer').doc(id).update({'Name': localName}).catchError((error) => print("Failed to update user: $error"));
 
                           if (phno != localPhoneNumber)
-                            await FirebaseFirestore.instance
-                                .collection('Customer')
-                                .doc(id)
-                                .update({'PhoneNumber': localPhoneNumber}).catchError((error) => print("Failed to update user: $error"));
+                            await FirebaseFirestore.instance.collection('Customer').doc(id).update({'PhoneNumber': localPhoneNumber}).catchError((error) => print("Failed to update user: $error"));
 
                           setState(() {
                             userAv = localAvatarCode;
