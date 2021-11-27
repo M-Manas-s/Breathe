@@ -12,6 +12,9 @@ String username;
 String useremail;
 String phno;
 Image userImg;
+String user;
+double gprice;
+int gquantity;
 
 class CustomRoute extends MaterialPageRoute {
   CustomRoute({WidgetBuilder builder}) : super(builder: builder);
@@ -77,11 +80,11 @@ String phoneNumberChecker(value) {
   return null;
 }
 
-class buttonWidget extends StatelessWidget {
+class ButtonWidget extends StatelessWidget {
   final String title;
   final Function onpressed;
 
-  const buttonWidget({
+  const ButtonWidget({
     Key key,
     this.title,
     this.onpressed,
@@ -93,7 +96,7 @@ class buttonWidget extends StatelessWidget {
         elevation: 2.5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         minWidth: MediaQuery.of(context).size.width * 0.3,
-        color: Theme.of(context).accentColor,
+        color: Color(0xFF1F4F99),
         onPressed: onpressed,
         child: Text(
           title,
@@ -103,12 +106,12 @@ class buttonWidget extends StatelessWidget {
 }
 
 //DONT HAVE ACCOUNT?
-class signUpRichText extends StatelessWidget {
+class SignUpRichText extends StatelessWidget {
   final String title;
   final String text;
   final Function onTap;
 
-  const signUpRichText({
+  const SignUpRichText({
     Key key,
     @required this.title,
     @required this.onTap,

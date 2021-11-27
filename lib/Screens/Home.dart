@@ -3,11 +3,14 @@ import 'dart:ui';
 import 'dart:math' as math;
 
 import 'package:breathe/Classes/Drawer.dart';
+import 'package:breathe/Screens/VendorLocation.dart';
 import 'package:breathe/Screens/VendorPage.dart';
 import 'package:flutter/rendering.dart';
 import 'package:breathe/Constants/Constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'Dashboard.dart';
 import 'OrderHistory.dart';
@@ -25,20 +28,18 @@ class _HomeState extends State<Home> {
   List<dynamic> list = [];
   bool loading = false;
   final GlobalKey<ScaffoldState> _key = GlobalKey();
-  int activeTab=0;
+  int activeTab = 0;
   bool queueReload = false;
-  List<String> pageLabel = [
-    "Fulfilled Oxygen Supplies",
-    "Order History",
-    "Vendors Around You",
-    "Settings"
-  ];
+  List<String> pageLabel = user == 'Customer' ? ["Fulfilled Oxygen Supplies", "Order History", "Vendors Around You", "Settings"] :
+  ["Fulfilled Oxygen Supplies", "Order History", "Settings"];
 
   @override
   void initState() {
     super.initState();
-    activeTab=0;
-    loading=false;
+    if ( user == 'Vendor' )
+        _getCurrentPosition();
+    activeTab = 0;
+    loading = false;
     userImg = Image.asset('assets/images/user.jpg');
     getData();
   }
@@ -47,6 +48,12 @@ class _HomeState extends State<Home> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     precacheImage(userImg.image, context);
+  }
+
+  Future<void> _getCurrentPosition() async {
+    final GeolocatorPlatform _geolocationPlatform = GeolocatorPlatform.instance;
+    final position = await _geolocationPlatform.getCurrentPosition();
+    userLoc = LatLng(position.latitude, position.longitude);
   }
 
   Future getData() async {
@@ -64,24 +71,26 @@ class _HomeState extends State<Home> {
     List<int> cavatar = [];
     List<int> vavatar = [];
 
-    await FirebaseFirestore.instance
-        .collection('Customer')
-        .where('Email', isEqualTo: useremail)
-        .get()
-        .then((QuerySnapshot querySnapshot) {
+    await FirebaseFirestore.instance.collection(user).where('Email', isEqualTo: useremail).get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         username = doc['Name'];
         userAv = doc['Avatar'];
         phno = doc['PhoneNumber'];
+        if ( user == 'Vendor' )
+          {
+            gprice = double.parse(doc['Price'].toString());
+            gquantity = doc['Quantity'];
+          }
+        else
+          {
+            gprice = 0.0;
+            gquantity = 0;
+          }
       });
     });
     print(username);
 
-    await FirebaseFirestore.instance
-        .collection('DealsHistory')
-        .orderBy('DateTime', descending: true)
-        .get()
-        .then((QuerySnapshot querySnapshot) {
+    await FirebaseFirestore.instance.collection('DealsHistory').orderBy('DateTime', descending: true).get().then((QuerySnapshot querySnapshot) {
       if (querySnapshot.size == 0) return;
       querySnapshot.docs.forEach((doc) {
         ve.add(doc['VendorEmail']);
@@ -92,36 +101,21 @@ class _HomeState extends State<Home> {
     });
 
     for (int i = 0; i < ve.length; i++) {
-      await FirebaseFirestore.instance
-          .collection('Vendor')
-          .where('Email', isEqualTo: ve[i])
-          .get()
-          .then((QuerySnapshot querySnapshot) {
+      await FirebaseFirestore.instance.collection('Vendor').where('Email', isEqualTo: ve[i]).get().then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
           vn.add(doc['Name']);
           vavatar.add(doc['Avatar']);
         });
       });
 
-      await FirebaseFirestore.instance
-          .collection('Customer')
-          .where('Email', isEqualTo: ce[i])
-          .get()
-          .then((QuerySnapshot querySnapshot) {
+      await FirebaseFirestore.instance.collection('Customer').where('Email', isEqualTo: ce[i]).get().then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
           cn.add(doc['Name']);
           cavatar.add(doc['Avatar']);
         });
       });
 
-      list.add({
-        "VN": vn[i],
-        "VA": vavatar[i],
-        "CN": cn[i],
-        "CA": cavatar[i],
-        "Price": p[i],
-        "DateTime": date[i]
-      });
+      list.add({"VN": vn[i], "VA": vavatar[i], "CN": cn[i], "CA": cavatar[i], "Price": p[i], "DateTime": date[i]});
     }
     while (list.length > 10) list.removeLast();
     setState(() {
@@ -130,12 +124,30 @@ class _HomeState extends State<Home> {
   }
 
   Widget tabs(int i) {
-    List<Widget> tabs = [
-      Dashboard(loading: loading, list: list,),
-      OrderHistory(loading: loading, list: list,),
-      VendorPage(),
-      UserSettings(),
-    ];
+    List<Widget> tabs = user == 'Customer'
+        ? [
+            Dashboard(
+              loading: loading,
+              list: list,
+            ),
+            OrderHistory(
+              loading: loading,
+              list: list,
+            ),
+            VendorPage(),
+            UserSettings(),
+          ]
+        : [
+            Dashboard(
+              loading: loading,
+              list: list,
+            ),
+            OrderHistory(
+              loading: loading,
+              list: list,
+            ),
+            UserSettings(),
+          ];
     return tabs[i];
   }
 
@@ -145,26 +157,30 @@ class _HomeState extends State<Home> {
 
     return WillPopScope(
       onWillPop: () async {
-        if ( _key.currentState.isDrawerOpen )
-          Navigator.pop(context);
+        if (_key.currentState.isDrawerOpen) Navigator.pop(context);
         return false;
       },
       child: Scaffold(
         key: _key,
-        drawer: !loading ? CustomDrawer(activeInd: activeTab, userImg: userImg, change: (int index) {
-          setState(() {
-            activeTab = index;
-            if ( index == 3 )
-                setState(() {
-                  queueReload = true;
-                });
-            if ( index == 0 && queueReload )
-              getData();
-          });
-          Timer(const Duration(milliseconds: 100), () {
-              Navigator.pop(context);
-          });
-        },) : Container(),
+        drawer: !loading
+            ? CustomDrawer(
+                activeInd: activeTab,
+                userImg: userImg,
+                change: (int index) {
+                  setState(() {
+                    activeTab = index;
+                    if (index == 3 - ((user == 'Vendor') ? 1 : 0))
+                      setState(() {
+                        queueReload = true;
+                      });
+                    if (index == 0 && queueReload) getData();
+                  });
+                  Timer(const Duration(milliseconds: 100), () {
+                    Navigator.pop(context);
+                  });
+                },
+              )
+            : Container(),
         body: Stack(children: <Widget>[
           Opacity(
             opacity: 0.95,
@@ -178,56 +194,56 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          Container(  // AppBar
-            margin: EdgeInsets.only(top: query.height*0.07),
-            padding: EdgeInsets.symmetric(horizontal: query.width*0.08),
+          Container(
+            // AppBar
+            margin: EdgeInsets.only(top: query.height * 0.07),
+            padding: EdgeInsets.symmetric(horizontal: query.width * 0.08),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
                   onPanDown: (var x) => !loading ? _key.currentState.openDrawer() : {},
                   child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      color: Colors.white.withOpacity(0.3),
-                    ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        color: Colors.white.withOpacity(0.3),
+                      ),
                       padding: EdgeInsets.all(2),
-                    child : SizedBox(
-                      width: query.width*0.115,
-                        height: query.width*0.115,
-                        child: Icon(Icons.view_headline, color: Colors.white, size: 27,))
-                  ),
+                      child: SizedBox(
+                          width: query.width * 0.115,
+                          height: query.width * 0.115,
+                          child: Icon(
+                            Icons.view_headline,
+                            color: Colors.white,
+                            size: 27,
+                          ))),
                 ),
                 SizedBox(
-                  width: query.width*0.05,
+                  width: query.width * 0.05,
                 ),
                 Container(
-                    child : Text("Breathe",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      letterSpacing: 4,
-                      fontWeight: FontWeight.w600
-                    ),)
-                ),
+                    child: Text(
+                  "Breathe",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 30, letterSpacing: 4, fontWeight: FontWeight.w600),
+                )),
                 SizedBox(
-                  width: query.width*0.05,
+                  width: query.width * 0.05,
                 ),
                 GestureDetector(
-                  onPanDown: (var x) => Navigator.pushAndRemoveUntil(context,
-                      CustomRoute(builder: (_) => Search()), (r) => false),
+                  onPanDown: (var x) {
+                    if ( user=='Customer' )
+                      Navigator.pushAndRemoveUntil(context, CustomRoute(builder: (_) => Search()), (r) => false);
+                    else
+                      Navigator.push(context,MaterialPageRoute(builder: (route) => VendorLocation()));
+                  },
                   child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         color: Colors.white.withOpacity(0.3),
                       ),
                       padding: EdgeInsets.all(2),
-                      child : SizedBox(
-                          width: query.width*0.115,
-                          height: query.width*0.115,
-                          child: Icon(Icons.search, color: Colors.white, size : 27))
-                  ),
+                      child: SizedBox(width: query.width * 0.115, height: query.width * 0.115, child: Icon(user == 'Customer' ? Icons.search : Icons.place,color: Colors.white, size: 27))),
                 ),
               ],
             ),
@@ -246,22 +262,23 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-            margin: EdgeInsets.symmetric(vertical: query.height * 0.16, horizontal: query.width*0.08),
+            margin: EdgeInsets.symmetric(vertical: query.height * 0.16, horizontal: query.width * 0.08),
             child: SizedBox(
-              height: query.height*0.08,
+              height: query.height * 0.08,
               child: Center(
-                child: Text(pageLabel[activeTab],
-                style: TextStyle(
-                  letterSpacing: 1,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 20,
-                ),),
+                child: Text(
+                  pageLabel[activeTab],
+                  style: TextStyle(
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 20,
+                  ),
+                ),
               ),
             ),
           )
         ]),
       ),
     );
-
   }
 }

@@ -7,8 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CustomDrawer extends StatelessWidget {
   final int activeInd;
   final Image userImg;
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  Function change;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final Function change;
 
   CustomDrawer({
     this.activeInd,
@@ -16,10 +16,14 @@ class CustomDrawer extends StatelessWidget {
     this.change,
   });
 
-  List<dynamic> optionsData = [
+  final List<dynamic> optionsData = user == 'Customer' ? [
     {"icon": Icons.dashboard, "label": "Dashboard"},
     {"icon": Icons.history, "label": "Order History"},
     {"icon": Icons.groups, "label": "Vendors"},
+    {"icon": Icons.settings, "label": "Settings"}
+  ] : [
+    {"icon": Icons.dashboard, "label": "Dashboard"},
+    {"icon": Icons.history, "label": "Order History"},
     {"icon": Icons.settings, "label": "Settings"}
   ];
 
@@ -35,18 +39,11 @@ class CustomDrawer extends StatelessWidget {
         padding: EdgeInsets.all(3.0),
         child: Row(
           children: [
-            Icon(optionsData[index]["icon"],
-                size: activeInd == index ? 42 : 32,
-                color: activeInd == index ? Color(0xFF1F4F99) : Colors.black),
+            Icon(optionsData[index]["icon"], size: activeInd == index ? 42 : 32, color: activeInd == index ? Color(0xFF1F4F99) : Colors.black),
             SizedBox(
               width: 15,
             ),
-            Text(optionsData[index]["label"],
-                style: TextStyle(
-                    fontSize: activeInd == index ? 27 : 22,
-                    fontWeight: FontWeight.w700,
-                    color:
-                        activeInd == index ? Color(0xFF1F4F99) : Colors.black)),
+            Text(optionsData[index]["label"], style: TextStyle(fontSize: activeInd == index ? 27 : 22, fontWeight: FontWeight.w700, color: activeInd == index ? Color(0xFF1F4F99) : Colors.black)),
           ],
         ),
       ),
@@ -66,38 +63,32 @@ class CustomDrawer extends StatelessWidget {
             width: query.width * .55,
             height: query.width * .55,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(100),
-                  bottomRight: Radius.circular(100)),
-              color: Theme.of(context).accentColor.withAlpha(30),
+              borderRadius: BorderRadius.only(topRight: Radius.circular(100), bottomRight: Radius.circular(100)),
+              color: Color(0xFF1F4F99).withAlpha(30),
             ),
           ),
           Container(
             width: query.width * .7,
             height: query.width * .7,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.elliptical(100, 150),
-                  bottomRight: Radius.circular(200)),
-              color: Theme.of(context).accentColor.withAlpha(20),
+              borderRadius: BorderRadius.only(topRight: Radius.elliptical(100, 150), bottomRight: Radius.circular(200)),
+              color: Color(0xFF1F4F99).withAlpha(20),
             ),
           ),
           Container(
             width: query.width * .8,
             height: query.width * .8,
             decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.only(bottomRight: Radius.elliptical(160, 150)),
-              color: Theme.of(context).accentColor.withAlpha(15),
+              borderRadius: BorderRadius.only(bottomRight: Radius.elliptical(160, 150)),
+              color: Color(0xFF1F4F99).withAlpha(15),
             ),
           ),
           Container(
             width: query.width * .8,
             height: query.width * 0.95,
             decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.only(bottomRight: Radius.elliptical(120, 80)),
-              color: Theme.of(context).accentColor.withAlpha(10),
+              borderRadius: BorderRadius.only(bottomRight: Radius.elliptical(120, 80)),
+              color: Color(0xFF1F4F99).withAlpha(10),
             ),
           ),
           Padding(
@@ -123,13 +114,7 @@ class CustomDrawer extends StatelessWidget {
                           child: Text(
                             "Hi\n${username.split(' ')[0]}!",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 230,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0,
-                                color: Theme.of(context)
-                                    .accentColor
-                                    .withGreen(40)),
+                            style: TextStyle(fontSize: 230, fontWeight: FontWeight.w700, letterSpacing: 0, color: Color(0xFF1F4F99).withGreen(40)),
                           ))
                     ],
                   ),
@@ -162,24 +147,18 @@ class CustomDrawer extends StatelessWidget {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.remove('Email');
                 prefs.remove('User');
-                Navigator.pushAndRemoveUntil(context,
-                    CustomRoute(builder: (_) => LandingPage()), (r) => false);
+                Navigator.pushAndRemoveUntil(context, CustomRoute(builder: (_) => LandingPage()), (r) => false);
               },
               child: Container(
                 margin: EdgeInsets.only(top: 28.0, left: 22.0, bottom: 20.0),
                 width: query.width,
                 child: Row(
                   children: [
-                    Icon(Icons.power_settings_new_outlined,
-                        size: 35, color: Colors.black),
+                    Icon(Icons.power_settings_new_outlined, size: 35, color: Colors.black),
                     SizedBox(
                       width: 15,
                     ),
-                    Text('Sign Out',
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black)),
+                    Text('Sign Out', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700, color: Colors.black)),
                   ],
                 ),
               ),

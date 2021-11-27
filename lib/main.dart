@@ -1,17 +1,17 @@
 import 'dart:async';
+
 import 'package:breathe/Screens/Home.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'Constants/Constants.dart';
 import 'Screens/LandingPage.dart';
 import 'Screens/Login.dart';
-import 'Screens/Register.dart';
 import 'Screens/MapView.dart';
+import 'Screens/Register.dart';
 import 'Screens/Search.dart';
-import 'Screens/VendorDashboard.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +44,6 @@ class MyApp extends StatelessWidget {
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,
-          accentColor: Color(0xFF1F4F99),
           scaffoldBackgroundColor: Colors.white,
         ),
         home: SplashScreen());
@@ -58,18 +57,16 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool visible = true;
-  String user;
 
   navigateToDashboard() {
-    user == "Customer"
-        ? Navigator.pushAndRemoveUntil(context, LandingPageRoute(builder: (_) => Home()), (r) => false)
-        : Navigator.pushAndRemoveUntil(context, LandingPageRoute(builder: (_) => VendorDashboard()), (r) => false);
+      Navigator.pushAndRemoveUntil(context, LandingPageRoute(builder: (_) => Home()), (r) => false);
   }
 
   prefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     useremail = prefs.getString('Email') ?? "";
     user = prefs.getString('User') ?? "";
+    prefs.clear();
   }
 
   @override

@@ -45,7 +45,7 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
               location: stringToLatLng(doc['Location']),
               quantity: doc['Quantity'],
               address: doc['Address1'] + " " + doc['Address2'],
-              rating: doc['Rating'],
+              rating: doc['Rating']*1.0,
               totalRatings: doc['TotalRatings'],
               supplied: doc['Supplied'],
               avatarCode: doc['Avatar']));

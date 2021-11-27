@@ -5,8 +5,8 @@ import 'package:skeleton_loader/skeleton_loader.dart';
 import 'package:intl/intl.dart';
 
 class Dashboard extends StatefulWidget {
-  List<dynamic> list = [];
-  bool loading = false;
+  final List<dynamic> list;
+  final bool loading;
 
   Dashboard({@required this.list, @required this.loading});
 
@@ -38,7 +38,7 @@ class _DashboardState extends State<Dashboard> {
                           ))),
                   items: 7,
                   period: Duration(seconds: 2),
-                  highlightColor: Theme.of(context).accentColor.withAlpha(100),
+                  highlightColor: Color(0xFF1F4F99).withAlpha(100),
                   direction: SkeletonDirection.ltr,
                 ),
               )

@@ -13,6 +13,8 @@ class _UserSettingsState extends State<UserSettings> {
   String localName = username;
   String localPhoneNumber = phno;
   int localAvatarCode = userAv;
+  double localPrice = gprice;
+  int localQuantity = gquantity;
 
   List<int> avlist = [11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42, 43, 44];
 
@@ -83,7 +85,7 @@ class _UserSettingsState extends State<UserSettings> {
                                         localName = value;
                                       });
                                     },
-                                    cursorColor: Theme.of(context).accentColor,
+                                    cursorColor: Color(0xFF1F4F99),
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                       fontSize: 22,
@@ -92,7 +94,6 @@ class _UserSettingsState extends State<UserSettings> {
                                       isDense: true,
                                       contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                                       hintText: localName,
-                                      hintStyle: TextStyle(color: Colors.black),
                                     ),
                                   ),
                                 ),
@@ -136,7 +137,7 @@ class _UserSettingsState extends State<UserSettings> {
                                             localPhoneNumber = value.toString();
                                           });
                                         },
-                                        cursorColor: Theme.of(context).accentColor,
+                                        cursorColor: Color(0xFF1F4F99),
                                         keyboardType: TextInputType.number,
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
@@ -146,7 +147,6 @@ class _UserSettingsState extends State<UserSettings> {
                                           isDense: true,
                                           contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                                           hintText: localPhoneNumber,
-                                          hintStyle: TextStyle(color: Colors.black),
                                         ),
                                       ),
                                     ),
@@ -159,6 +159,92 @@ class _UserSettingsState extends State<UserSettings> {
                             height: query.height * 0.015,
                           ),
                           Divider(),
+                          user == 'Vendor' ? Column(
+                            children: [
+
+                              SizedBox(
+                                height: query.height * 0.015,
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: query.width * 0.08),
+                                child: Row(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Price ",
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
+                                        ),
+                                        SizedBox(
+                                          height: query.height * 0.01,
+                                        ),
+                                        SizedBox(
+                                          width: query.width * 0.40,
+                                          child: TextField(
+                                            onChanged: (value) {
+                                              setState(() {
+                                                localPrice = double.parse(value);
+                                              });
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            cursorColor: Color(0xFF1F4F99),
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                              fontSize: 22,
+                                            ),
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                                              hintText: localPrice.toStringAsFixed(2),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width: query.width*0.04,),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Quantity ",
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
+                                        ),
+                                        SizedBox(
+                                          height: query.height * 0.01,
+                                        ),
+                                        SizedBox(
+                                          width: query.width * 0.40,
+                                          child: TextField(
+                                            onChanged: (value) {
+                                              setState(() {
+                                                localQuantity = int.parse(value);
+                                              });
+                                            },
+                                            cursorColor: Color(0xFF1F4F99),
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                              fontSize: 22,
+                                            ),
+                                            keyboardType: TextInputType.number,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                                              hintText: localQuantity.toString(),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: query.height * 0.015,
+                              ),
+                              Divider(),
+                            ],
+                          ) : Container(),
                           SizedBox(
                             height: query.height * 0.015,
                           ),
@@ -209,10 +295,7 @@ class _UserSettingsState extends State<UserSettings> {
                                                             top: 0,
                                                             bottom: 0,
                                                             child: Container(
-                                                              decoration: BoxDecoration(
-                                                                color: Colors.black.withOpacity(0.5),
-                                                                borderRadius: BorderRadius.circular(300)
-                                                              ),
+                                                              decoration: BoxDecoration(color: Colors.black.withOpacity(0.5), borderRadius: BorderRadius.circular(300)),
                                                             )),
                                                         Positioned.fill(
                                                           child: Align(
@@ -254,20 +337,26 @@ class _UserSettingsState extends State<UserSettings> {
                           _showBasicsFlash(duration: Duration(seconds: 2), flashStyle: FlashBehavior.fixed);
 
                           String id;
-                          await FirebaseFirestore.instance.collection('Customer').where('Email', isEqualTo: useremail).get().then((QuerySnapshot querySnapshot) {
+                          await FirebaseFirestore.instance.collection(user).where('Email', isEqualTo: useremail).get().then((QuerySnapshot querySnapshot) {
                             querySnapshot.docs.forEach((doc) {
                               id = doc.id;
                             });
                           });
 
                           if (localAvatarCode != userAv)
-                            await FirebaseFirestore.instance.collection('Customer').doc(id).update({'Avatar': localAvatarCode}).catchError((error) => print("Failed to update user: $error"));
+                            await FirebaseFirestore.instance.collection(user).doc(id).update({'Avatar': localAvatarCode}).catchError((error) => print("Failed to update user: $error"));
 
                           if (localName != username)
-                            await FirebaseFirestore.instance.collection('Customer').doc(id).update({'Name': localName}).catchError((error) => print("Failed to update user: $error"));
+                            await FirebaseFirestore.instance.collection(user).doc(id).update({'Name': localName}).catchError((error) => print("Failed to update user: $error"));
 
                           if (phno != localPhoneNumber)
-                            await FirebaseFirestore.instance.collection('Customer').doc(id).update({'PhoneNumber': localPhoneNumber}).catchError((error) => print("Failed to update user: $error"));
+                            await FirebaseFirestore.instance.collection(user).doc(id).update({'PhoneNumber': localPhoneNumber}).catchError((error) => print("Failed to update user: $error"));
+
+                          if (gquantity != localQuantity)
+                            await FirebaseFirestore.instance.collection(user).doc(id).update({'Quantity': localQuantity}).catchError((error) => print("Failed to update user: $error"));
+
+                          if (gprice != localPrice)
+                            await FirebaseFirestore.instance.collection(user).doc(id).update({'Price': localPrice}).catchError((error) => print("Failed to update user: $error"));
 
                           setState(() {
                             userAv = localAvatarCode;
@@ -277,7 +366,7 @@ class _UserSettingsState extends State<UserSettings> {
                         },
                         child: Container(
                           height: query.height * 0.08,
-                          color: Theme.of(context).accentColor,
+                          color: Color(0xFF1F4F99),
                           child: Center(
                             child: Text(
                               "UPDATE",

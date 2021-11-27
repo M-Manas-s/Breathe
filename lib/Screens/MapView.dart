@@ -311,14 +311,9 @@ class _MapViewState extends State<MapView> {
           spinner = true;
         });
 
-        String ve;
-        double price;
-        int qu;
         String id;
         int sup;
         double rat;
-
-        SharedPreferences prefs = await SharedPreferences.getInstance();
 
         await FirebaseFirestore.instance
             .collection('Vendor')
@@ -327,16 +322,17 @@ class _MapViewState extends State<MapView> {
             .then((QuerySnapshot querySnapshot) {
           querySnapshot.docs.forEach((doc) {
             id = doc.id;
-            ve = doc['Email'];
-            price = doc['Price'] * 1.00;
-            qu = doc['Quantity'];
             sup = doc['Supplied'];
-            rat = doc['Rating'];
+            rat = doc['Rating']*1.0;
           });
         });
-
-        double nrating = rat * (sup - 1) + rating;
-        nrating = nrating / (sup);
+        double nrating;
+        if ( sup != 0 ) {
+          nrating = rat * (sup - 1) + rating;
+          nrating = nrating / (sup);
+        }
+        else
+          nrating = (rat+rating)/2;
 
         if (rating != -1)
           await FirebaseFirestore.instance
@@ -472,7 +468,7 @@ class _MapViewState extends State<MapView> {
       },
       child: ModalProgressHUD(
         progressIndicator: SpinKitChasingDots(
-          color: Theme.of(context).accentColor,
+          color: Color(0xFF1F4F99),
           size: 30.0,
         ),
         inAsyncCall: spinner,
@@ -524,7 +520,7 @@ class _MapViewState extends State<MapView> {
                                     child: Text(
                                       "Oxygen Vendors near you",
                                       style: TextStyle(
-                                        color: Theme.of(context).accentColor,
+                                        color: Color(0xFF1F4F99),
                                         fontWeight: FontWeight.bold,
                                         fontSize: 22,
                                       ),
@@ -628,7 +624,7 @@ class _MapViewState extends State<MapView> {
                                           top: 10,
                                           bottom: 10),
                                       radius: 20,
-                                      color: Theme.of(context).accentColor,
+                                      color: Color(0xFF1F4F99),
                                       child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,

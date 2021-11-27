@@ -74,7 +74,6 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   void reloadList(String value, BuildContext context, {bool forceOrder = false}) {
-
     // 'Rating', 'Price', 'Supplied', 'Distance'
 
     setState(() {
@@ -82,18 +81,17 @@ class _VendorPageState extends State<VendorPage> {
     });
     switch (value) {
       case 'Rating':
-        if ( forceOrder && increasingOrder)
-            vendorList.sort((a, b) => (a.rating).compareTo(b.rating));
-        else
-          {
-            vendorList.sort((a, b) => (b.rating).compareTo(a.rating));
-            increasingOrder = false;
-          }
+        if (forceOrder && increasingOrder)
+          vendorList.sort((a, b) => (a.rating).compareTo(b.rating));
+        else {
+          vendorList.sort((a, b) => (b.rating).compareTo(a.rating));
+          increasingOrder = false;
+        }
         break;
 
       case 'Price':
-        if ( forceOrder && !increasingOrder )
-            vendorList.sort((a, b) => (b.price).compareTo(a.price));
+        if (forceOrder && !increasingOrder)
+          vendorList.sort((a, b) => (b.price).compareTo(a.price));
         else {
           vendorList.sort((a, b) => (a.price).compareTo(b.price));
           increasingOrder = true;
@@ -101,7 +99,7 @@ class _VendorPageState extends State<VendorPage> {
         break;
 
       case 'Supplied':
-        if ( forceOrder && increasingOrder )
+        if (forceOrder && increasingOrder)
           vendorList.sort((a, b) => (a.supplied).compareTo(b.supplied));
         else {
           vendorList.sort((a, b) => (b.supplied).compareTo(a.supplied));
@@ -110,8 +108,8 @@ class _VendorPageState extends State<VendorPage> {
         break;
 
       case 'Distance':
-        if ( forceOrder && !increasingOrder )
-        vendorList.sort((a, b) => (calculateDistance(b.location, userLoc)).compareTo(calculateDistance(a.location, userLoc)));
+        if (forceOrder && !increasingOrder)
+          vendorList.sort((a, b) => (calculateDistance(b.location, userLoc)).compareTo(calculateDistance(a.location, userLoc)));
         else {
           vendorList.sort((a, b) => (calculateDistance(a.location, userLoc)).compareTo(calculateDistance(b.location, userLoc)));
           increasingOrder = true;
@@ -145,7 +143,7 @@ class _VendorPageState extends State<VendorPage> {
                               ))),
                       items: 7,
                       period: Duration(seconds: 2),
-                      highlightColor: Theme.of(context).accentColor.withAlpha(100),
+                      highlightColor: Color(0xFF1F4F99).withAlpha(100),
                       direction: SkeletonDirection.ltr,
                     ),
                   )
@@ -154,12 +152,12 @@ class _VendorPageState extends State<VendorPage> {
                     child: Column(
                       children: [
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: query.width*0.04, vertical: query.height * 0.02),
+                          margin: EdgeInsets.symmetric(horizontal: query.width * 0.04, vertical: query.height * 0.02),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
-                                padding : EdgeInsets.symmetric(horizontal: query.width*0.05),
+                                padding: EdgeInsets.symmetric(horizontal: query.width * 0.05),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -221,14 +219,13 @@ class _VendorPageState extends State<VendorPage> {
                                       ),
                                     ],
                                   ),
-                                  child : IconButton(
+                                  child: IconButton(
                                     icon: Icon(increasingOrder ? Icons.arrow_upward : Icons.arrow_downward, color: Colors.black),
                                     onPressed: () {
                                       increasingOrder = !increasingOrder;
                                       reloadList(dropdownValue, context, forceOrder: true);
                                     },
-                                  )
-                              )
+                                  ))
                             ],
                           ),
                         ),
@@ -280,7 +277,7 @@ class _VendorPageState extends State<VendorPage> {
                                                   Text(
                                                     vendorList[index].name,
                                                     style: TextStyle(
-                                                      color: Theme.of(context).accentColor,
+                                                      color: Color(0xFF1F4F99),
                                                       fontWeight: FontWeight.w800,
                                                       fontSize: 16,
                                                     ),
@@ -380,7 +377,7 @@ class _VendorPageState extends State<VendorPage> {
                                                               margin: EdgeInsets.symmetric(horizontal: query.width * 0.02),
                                                               padding: EdgeInsets.symmetric(horizontal: query.width * 0.03, vertical: 7),
                                                               radius: 20,
-                                                              color: Theme.of(context).accentColor,
+                                                              color: Color(0xFF1F4F99),
                                                               child: Text(
                                                                 "\u20B9 ${vendorList[index].price.toStringAsFixed(0)}",
                                                                 style: TextStyle(
@@ -394,14 +391,18 @@ class _VendorPageState extends State<VendorPage> {
                                                             onPanDown: (var x) {
                                                               Navigator.pushAndRemoveUntil(
                                                                   context,
-                                                                  MaterialPageRoute(builder: (context) => MapView(preLoaded: true,selVendor:vendorList[index],)),
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => MapView(
+                                                                            preLoaded: true,
+                                                                            selVendor: vendorList[index],
+                                                                          )),
                                                                   ModalRoute.withName(MapView.id));
                                                             },
                                                             child: CustomCard(
                                                               margin: EdgeInsets.symmetric(horizontal: query.width * 0.02),
                                                               padding: EdgeInsets.symmetric(horizontal: query.width * 0.03, vertical: 7),
                                                               radius: 20,
-                                                              color: Theme.of(context).accentColor,
+                                                              color: Color(0xFF1F4F99),
                                                               child: Row(
                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                 children: [

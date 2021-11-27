@@ -33,7 +33,7 @@ class VendorCard extends StatelessWidget {
                 Text(
                   vendor.name,
                   style: TextStyle(
-                    color: Theme.of(context).accentColor,
+                    color: Color(0xFF1F4F99),
                     fontWeight: FontWeight.w800,
                     fontSize: 20,
                   ),
@@ -131,7 +131,7 @@ class VendorCard extends StatelessWidget {
                       margin: EdgeInsets.only(left: query.width*0.04),
                       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       radius: 20,
-                      color: Theme.of(context).accentColor,
+                      color: Color(0xFF1F4F99),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

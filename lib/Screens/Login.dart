@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Home.dart';
 import 'Register.dart';
-import 'VendorDashboard.dart';
 
 class RegisterPageRoute extends MaterialPageRoute {
   RegisterPageRoute({WidgetBuilder builder}) : super(builder: builder);
@@ -47,7 +46,9 @@ class _LoginState extends State<Login> {
 
   void login() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String user = prefs.getString('User');
+    user = prefs.getString('User');
+    useremail = email;
+
     if (_formKey.currentState.validate()) {
       setState(() {
         spinner = true;
@@ -68,15 +69,10 @@ class _LoginState extends State<Login> {
 
         prefs.setString('Email', email);
 
-        if (authUser != null) {
-          user == "Customer"
-              ? Navigator.pushAndRemoveUntil(context,
-                  DashboardRoute(builder: (_) => Home()), (r) => false)
-              : Navigator.pushAndRemoveUntil(
-                  context,
-                  DashboardRoute(builder: (_) => VendorDashboard()),
-                  (r) => false);
-        }
+        if (authUser != null)
+              Navigator.pushAndRemoveUntil(context,
+                  DashboardRoute(builder: (_) => Home()), (r) => false);
+
       } on Exception {
         setState(() {
           spinner = false;
@@ -97,7 +93,7 @@ class _LoginState extends State<Login> {
       ),
       ModalProgressHUD(
         progressIndicator: SpinKitChasingDots(
-          color: Theme.of(context).accentColor,
+          color: Color(0xFF1F4F99),
           size: 30.0,
         ),
         inAsyncCall: spinner,
@@ -162,7 +158,7 @@ class _LoginState extends State<Login> {
                           onChanged: (value) {
                             email = value.trim();
                           },
-                          cursorColor: Theme.of(context).accentColor,
+                          cursorColor: Color(0xFF1F4F99),
                           textAlign: TextAlign.start,
                           decoration: InputDecoration(
                             fillColor: Color(0xFFD2D2D2),
@@ -195,7 +191,7 @@ class _LoginState extends State<Login> {
                                 password = value.trim();
                               },
                               obscureText: state,
-                              cursorColor: Theme.of(context).accentColor,
+                              cursorColor: Color(0xFF1F4F99),
                               textAlign: TextAlign.start,
                               decoration: InputDecoration(
                                 focusedBorder: InputBorder.none,
@@ -252,17 +248,18 @@ class _LoginState extends State<Login> {
                           'Log In',
                           style: TextStyle(color: Colors.white, fontSize: 17),
                         ),
+                        padding: EdgeInsets.symmetric(vertical: 12),
                         margin: EdgeInsets.symmetric(
-                          horizontal: 80,
+                          horizontal: 60,
                         ),
-                        color: Theme.of(context).accentColor,
-                        radius: 30.0,
+                        color: Color(0xFF1F4F99),
+                        radius: 10.0,
                       ),
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.02,
                     ),
-                    signUpRichText(
+                    SignUpRichText(
                       title: "Sign Up!",
                       onTap: () {
                         Navigator.push(context,

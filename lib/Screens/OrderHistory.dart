@@ -12,10 +12,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 
 class OrderHistory extends StatefulWidget {
-  List<dynamic> list = [];
-  bool loading;
+  final List<dynamic> list;
+  final bool loading;
 
-  OrderHistory({this.list, this.loading});
+  OrderHistory({@required this.list,@required this.loading});
 
   @override
   _OrderHistoryState createState() => _OrderHistoryState();
@@ -28,16 +28,16 @@ class _OrderHistoryState extends State<OrderHistory> {
   void initState() {
     super.initState();
     perList =
-        widget.list.where((element) => element["CN"] == username).toList();
+        widget.list.where((element) => user== 'Customer' ? element["CN"] == username : element["VN"] == username).toList();
   }
 
   void _showBasicsFlash(String name,{
-    Duration duration,
+    Duration duration = const Duration(seconds: 3),
     flashStyle = FlashBehavior.floating,
   }) {
     showFlash(
       context: context,
-      duration: Duration(seconds: 3),
+      duration: duration,
       builder: (context, controller) {
         return Flash(
           controller: controller,
@@ -65,8 +65,6 @@ class _OrderHistoryState extends State<OrderHistory> {
     print(status);
 
     final doc = pw.Document();
-
-    Image imp = Image.asset('assets/images/icon.png');
 
     doc.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -115,7 +113,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                         ))),
                 items: 7,
                 period: Duration(seconds: 2),
-                highlightColor: Theme.of(context).accentColor.withAlpha(100),
+                highlightColor: Color(0xFF1F4F99).withAlpha(100),
                 direction: SkeletonDirection.ltr,
               ),
             )
@@ -160,14 +158,14 @@ class _OrderHistoryState extends State<OrderHistory> {
                                       height: query.height * 0.15,
                                       child: FittedBox(
                                         fit: BoxFit.fill,
-                                        child: userAvater(perList[index]["VA"],
+                                        child: userAvater(perList[index][user == 'Customer' ?  "VA" : "CA"],
                                             context, userImg),
                                       ),
                                     ),
                                     Container(
                                       padding: EdgeInsets.all(3),
                                       child: Text(
-                                        perList[index]["VN"],
+                                        perList[index][user == 'Customer' ? "VN" : "CN"],
                                         style: TextStyle(
                                           fontSize: 14,
                                         ),
@@ -206,7 +204,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                 height: query.height * 0.005,
                                               ),
                                               Text(
-                                                  " ${DateFormat('d/M/y').format(DateTime.parse(widget.list[index]["DateTime"]))}",
+                                                  " ${DateFormat('d/M/y').format(DateTime.parse(perList[index]["DateTime"]))}",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 18,
@@ -235,7 +233,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                 height: query.height * 0.005,
                                               ),
                                               Text(
-                                                  ' \u{20B9}${widget.list[index]["Price"].toInt().toString()}',
+                                                  ' \u{20B9}${perList[index]["Price"].toInt().toString()}',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 18,
@@ -248,7 +246,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                     ),
                                     GestureDetector(
                                       onPanDown: (var x) {
-                                        _downloadInvoice(widget.list[index]);
+                                        _downloadInvoice(perList[index]);
                                       },
                                       child: CustomCard(
                                           radius: 20,

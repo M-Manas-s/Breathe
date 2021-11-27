@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'Home.dart';
-import 'VendorDashboard.dart';
 
 class Register extends StatefulWidget {
   static String id = 'Register';
@@ -26,29 +24,30 @@ class _RegisterState extends State<Register> {
   bool spinner = false;
   bool state = true;
   bool absorb = false;
-  int avatar;
+  int localAvatarCode = 11;
+
+  List<int> avlist = [11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42, 43, 44];
 
   FirebaseAuth auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
 
   Future<void> signUp() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String user = prefs.getString('User');
-
+    user = prefs.getString('User');
+    useremail = email;
     if (_formKey.currentState.validate()) {
       setState(() {
         spinner = true;
       });
-      var newuser = await auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      var newuser = await auth.createUserWithEmailAndPassword(email: email, password: password);
       await auth.currentUser.updateDisplayName(name);
 
-      if ( user=='Customer' )
+      if (user == 'Customer')
         FirebaseFirestore.instance.collection('$user').add({
           'Name': name,
           "Email": email,
           "PhoneNumber": phno,
-          "Avatar": avatar,
+          "Avatar": localAvatarCode,
         });
       else
         FirebaseFirestore.instance.collection('$user').add({
@@ -58,12 +57,12 @@ class _RegisterState extends State<Register> {
           "Price": 0,
           "Location": "null",
           "Quantity": 0,
-          "Address1" : '',
-          "Address2" : '',
-          "Avatar": avatar,
-          "Rating": 0,
-          "TotalRatings":0,
-          "Supplied": 15,
+          "Address1": '',
+          "Address2": '',
+          "Avatar": localAvatarCode,
+          "Rating": 0.0,
+          "TotalRatings": 0,
+          "Supplied": 0,
         });
       prefs.setString('Email', '$email');
 
@@ -72,36 +71,35 @@ class _RegisterState extends State<Register> {
       });
 
       if (newuser != null) {
-        if ( user=='Customer' )
-        Navigator.pushAndRemoveUntil(
-            context, CustomRoute(builder: (_) => Home()), (r) => false);
-        else
-          Navigator.pushAndRemoveUntil(
-              context, CustomRoute(builder: (_) => VendorDashboard()), (r) => false);
+        Navigator.pushAndRemoveUntil(context, CustomRoute(builder: (_) => Home()), (r) => false);
       }
     }
   }
 
   @override
+  void initState() {
+    super.initState();
+    userImg = Image.asset('assets/images/user.jpg');
+  }
+
+  @override
   Widget build(BuildContext context) {
+    Size query = MediaQuery.of(context).size;
     return ModalProgressHUD(
       progressIndicator: SpinKitChasingDots(
-        color: Theme.of(context).accentColor,
+        color: Color(0xFF1F4F99),
         size: 30.0,
       ),
       inAsyncCall: spinner,
       child: Scaffold(
         body: Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              //padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
+          child: Container(
+            child: SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.1,
+                    height: MediaQuery.of(context).size.height * 0.05,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -117,7 +115,7 @@ class _RegisterState extends State<Register> {
                       Text(
                         "Breathe",
                         style: TextStyle(
-                          color: Theme.of(context).accentColor,
+                          color: Color(0xFF1F4F99),
                           fontWeight: FontWeight.bold,
                           fontSize: 30,
                         ),
@@ -128,7 +126,7 @@ class _RegisterState extends State<Register> {
                     height: MediaQuery.of(context).size.height * 0.05,
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: query.width * 0.1),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -151,7 +149,7 @@ class _RegisterState extends State<Register> {
                             onChanged: (value) {
                               name = value.trim();
                             },
-                            cursorColor: Theme.of(context).accentColor,
+                            cursorColor: Color(0xFF1F4F99),
                             textAlign: TextAlign.start,
                             decoration: InputDecoration(
                               focusedBorder: InputBorder.none,
@@ -161,8 +159,7 @@ class _RegisterState extends State<Register> {
                               fillColor: Color(0xFFD2D2D2),
                               filled: true,
                               hintText: "Full Name",
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 20.0),
+                              contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                             ),
                             validator: nameValidator,
                           ),
@@ -171,7 +168,7 @@ class _RegisterState extends State<Register> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: query.width * 0.1, vertical: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -194,7 +191,7 @@ class _RegisterState extends State<Register> {
                             onChanged: (value) {
                               email = value.trim();
                             },
-                            cursorColor: Theme.of(context).accentColor,
+                            cursorColor: Color(0xFF1F4F99),
                             textAlign: TextAlign.start,
                             decoration: InputDecoration(
                               focusedBorder: InputBorder.none,
@@ -204,8 +201,7 @@ class _RegisterState extends State<Register> {
                               fillColor: Color(0xFFD2D2D2),
                               filled: true,
                               hintText: "Your Email",
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 20.0),
+                              contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                             ),
                             validator: emailChecker,
                           ),
@@ -213,9 +209,8 @@ class _RegisterState extends State<Register> {
                       ],
                     ),
                   ),
-                  //SizedBox(height: 10),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: query.width * 0.1, vertical: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -234,15 +229,14 @@ class _RegisterState extends State<Register> {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5)),
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
                               ),
                               child: TextFormField(
                                 onChanged: (value) {
                                   password = value.trim();
                                 },
                                 obscureText: state,
-                                cursorColor: Theme.of(context).accentColor,
+                                cursorColor: Color(0xFF1F4F99),
                                 textAlign: TextAlign.start,
                                 decoration: InputDecoration(
                                   focusedBorder: InputBorder.none,
@@ -252,8 +246,7 @@ class _RegisterState extends State<Register> {
                                   fillColor: Color(0xFFD2D2D2),
                                   filled: true,
                                   hintText: "Create a Password",
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 20.0),
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                                 ),
                                 validator: passwordValidator,
                               ),
@@ -283,7 +276,7 @@ class _RegisterState extends State<Register> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: query.width * 0.1, vertical: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -306,7 +299,7 @@ class _RegisterState extends State<Register> {
                             onChanged: (value) {
                               phno = value.toString().trim();
                             },
-                            cursorColor: Theme.of(context).accentColor,
+                            cursorColor: Color(0xFF1F4F99),
                             textAlign: TextAlign.start,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
@@ -318,8 +311,7 @@ class _RegisterState extends State<Register> {
                               filled: true,
                               prefixText: "+91 ",
                               prefixStyle: TextStyle(color: Colors.black),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 20.0),
+                              contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                             ),
                             validator: phoneNumberChecker,
                           ),
@@ -327,8 +319,86 @@ class _RegisterState extends State<Register> {
                       ],
                     ),
                   ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: query.width * 0.1),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Avatar ",
+                              style: TextStyle(
+                                color: Colors.blue[700],
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                              ),
+                            ),
+                            SizedBox(
+                              height: query.height * 0.01,
+                            ),
+                            Container(
+                              height: query.height * 0.15,
+                              width: query.width * 0.8,
+                              decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 2), borderRadius: BorderRadius.all((Radius.circular(10)))),
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: avlist.length,
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        localAvatarCode = avlist[index];
+                                      });
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                                      child: avlist[index] == localAvatarCode
+                                          ? Stack(
+                                              children: [
+                                                FittedBox(
+                                                  fit: BoxFit.fill,
+                                                  child: Stack(children: [
+                                                    userAvater(avlist[index], context, userImg, br: BorderRadius.circular(100.0)),
+                                                  ]),
+                                                ),
+                                                Positioned.fill(
+                                                    left: 0,
+                                                    right: 0,
+                                                    top: 0,
+                                                    bottom: 0,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(color: Colors.black.withOpacity(0.5), borderRadius: BorderRadius.circular(300)),
+                                                    )),
+                                                Positioned.fill(
+                                                  child: Align(
+                                                    alignment: Alignment.center,
+                                                    child: Icon(
+                                                      Icons.done,
+                                                      color: Colors.white,
+                                                      size: 40,
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          : FittedBox(
+                                              fit: BoxFit.fill,
+                                              child: userAvater(avlist[index], context, userImg, br: BorderRadius.circular(100.0)),
+                                            ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.15,
+                    height: MediaQuery.of(context).size.height * 0.05,
                   ),
                   GestureDetector(
                     onPanDown: (var x) {
@@ -339,16 +409,14 @@ class _RegisterState extends State<Register> {
                         'Sign Up',
                         style: TextStyle(color: Colors.white, fontSize: 17),
                       ),
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       margin: EdgeInsets.symmetric(
-                        horizontal: 80,
+                        horizontal: query.width*0.1,
                       ),
                       color: Color(0xFF1F4F99),
-                      radius: 30.0,
+                      radius: 10.0,
                     ),
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                  )
                 ],
               ),
             ),
